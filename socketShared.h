@@ -12,9 +12,12 @@
 
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
-#define SERVER_ADDRESS_STR "132.66.16.33"
+//#define SERVER_ADDRESS_STR INADDR_ANY
 #define SERVER_PORT_SENDER 6342
 #define SERVER_PORT_RECIEVER 6343
+
+#define SENDER_PACKET_SIZE 6 //TODO: change
+#define RECIEVER_PACKET_SIZE 6
 
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
 

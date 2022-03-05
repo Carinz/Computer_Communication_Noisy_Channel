@@ -10,9 +10,6 @@ Last updated by Amnon Drory, Winter 2011.
 #define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#define SENDER_PACKET_SIZE 1000 //TODO: change
-#define RECIEVER_PACKET_SIZE 1000
-
 #include <stdio.h>
 #include <string.h>
 #include <winsock2.h>
@@ -27,7 +24,7 @@ Last updated by Amnon Drory, Winter 2011.
 //#define NUM_OF_WORKER_THREADS 2
 //TransferResult_t ReceiveBuffer( char* OutputBuffer, int RemainingBytesToReceive, SOCKET sd );
 
-#define MAX_LOOPS 2
+//#define MAX_LOOPS 2
 #define SEND_STR_SIZE 35
 //SOCKET mainSocket = INVALID_SOCKET;
 SOCKET socketSender = INVALID_SOCKET;
@@ -98,14 +95,14 @@ void MainServer()
 void createSocket(SOCKET * mainSocket, u_short serverPort)
 {
     
-	unsigned long Address;
+	//unsigned long Address;
 	SOCKADDR_IN service;
 	int bindRes;
 	int ListenRes;
 
 
     // Create a socket.    
-    *mainSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+    *mainSocket = socket( AF_INET, SOCK_STREAM, 0 );
 
     if ( *mainSocket == INVALID_SOCKET ) 
 	{
@@ -127,17 +124,17 @@ void createSocket(SOCKET * mainSocket, u_short serverPort)
 	// Create a sockaddr_in object and set its values.
 	// Declare variables
 
-	Address = inet_addr( SERVER_ADDRESS_STR );
-	if ( Address == INADDR_NONE )
-	{
-		printf("The string \"%s\" cannot be converted into an ip address. ending program.\n",
-				SERVER_ADDRESS_STR );
-		server_cleanup_2(mainSocket);
-        //assert(0);
-	}
+	//Address = inet_addr( INADDR_ANY );
+	// if ( Address == INADDR_NONE )
+	// {
+	// 	printf("The string \"%s\" cannot be converted into an ip address. ending program.\n",
+	// 			INADDR_ANY );
+	// 	server_cleanup_2(mainSocket);
+    //     //assert(0);
+	// }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = Address;
+    service.sin_addr.s_addr = INADDR_ANY;
     service.sin_port = htons( serverPort ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	                                   //( which is big-endian ).
 	/*
@@ -214,32 +211,32 @@ int main(int argc, char * args[])
 	MainServer();
 }
 
-// TransferResult_t ReceiveBuffer( char* OutputBuffer, int BytesToReceive, SOCKET sd )
-// {
-// 	char* CurPlacePtr = OutputBuffer;
-// 	int BytesJustTransferred;
-// 	int RemainingBytesToReceive = BytesToReceive;
+TransferResult_t ReceiveBuffer( char* OutputBuffer, int BytesToReceive, SOCKET sd )
+{
+	char* CurPlacePtr = OutputBuffer;
+	int BytesJustTransferred;
+	int RemainingBytesToReceive = BytesToReceive;
 	
-// 	while ( RemainingBytesToReceive > 0 )  
-// 	{
-// 		/* send does not guarantee that the entire message is sent */
-// 		BytesJustTransferred = recv(sd, CurPlacePtr, RemainingBytesToReceive, 0);
-// 		if ( BytesJustTransferred == SOCKET_ERROR ) 
-// 		{
-// 			printf("recv() failed, error %d\n", WSAGetLastError() );
-// 			return TRNS_FAILED;
-// 		}		
-// 		else if ( BytesJustTransferred == 0 )
-// 			return TRNS_DISCONNECTED; // recv() returns zero if connection was gracefully disconnected.
+	while ( RemainingBytesToReceive > 0 )  
+	{
+		/* send does not guarantee that the entire message is sent */
+		BytesJustTransferred = recv(sd, CurPlacePtr, RemainingBytesToReceive, 0);
+		if ( BytesJustTransferred == SOCKET_ERROR ) 
+		{
+			printf("recv() failed, error %d\n", WSAGetLastError() );
+			return TRNS_FAILED;
+		}		
+		else if ( BytesJustTransferred == 0 )
+			return TRNS_DISCONNECTED; // recv() returns zero if connection was gracefully disconnected.
 
-// 		RemainingBytesToReceive -= BytesJustTransferred;
-// 		CurPlacePtr += BytesJustTransferred; // <ISP> pointer arithmetic
+		RemainingBytesToReceive -= BytesJustTransferred;
+		CurPlacePtr += BytesJustTransferred; // <ISP> pointer arithmetic
 
-// 		if (*(CurPlacePtr-1) == EOF)
-// 		{
-// 			break;
-// 		}
-// 	}
+		if (*(CurPlacePtr-1) == EOF)
+		{
+			break;
+		}
+	}
 
-// 	return TRNS_SUCCEEDED;
-// }
+	return TRNS_SUCCEEDED;
+}

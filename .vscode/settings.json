@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "socketshared.h": "c"
+        "socketshared.h": "c",
+        "socketsendrecvtools.h": "c"
     }
 }
