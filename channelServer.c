@@ -10,17 +10,22 @@ Last updated by Amnon Drory, Winter 2011.
 #define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#define SENDER_PACKET_SIZE 1000 //TODO: change
+#define RECIEVER_PACKET_SIZE 1000
+
 #include <stdio.h>
 #include <string.h>
 #include <winsock2.h>
 #include <assert.h>
 
+#include "channelServer.h"
 #include "socketShared.h"
 #include "SocketSendRecvTools.h"
-#include "channelServer.h"
+
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 //#define NUM_OF_WORKER_THREADS 2
+//TransferResult_t ReceiveBuffer( char* OutputBuffer, int RemainingBytesToReceive, SOCKET sd );
 
 #define MAX_LOOPS 2
 #define SEND_STR_SIZE 35
@@ -32,19 +37,6 @@ SOCKET acceptSocketSender;
 SOCKET acceptSocketReciever;
 
 char senderBuffer[SENDER_PACKET_SIZE];
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-
-//HANDLE ThreadHandles[NUM_OF_WORKER_THREADS];
-//SOCKET ThreadInputs[NUM_OF_WORKER_THREADS];
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-
-//static int FindFirstUnusedThreadSlot();
-//static void CleanupWorkerThreads();
-//static DWORD ServiceThread( SOCKET *t_socket );
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 void MainServer()
 {
@@ -73,7 +65,7 @@ void MainServer()
 
     do
     {
-        statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, socketSender);
+        statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
         if (statusRecieve == TRNS_FAILED)
         {
             //TODO: handle
@@ -83,11 +75,11 @@ void MainServer()
 
         if (statusRecieve == TRNS_DISCONNECTED)
         {
-            gracefullyDisC(sock);
-            gracefullyDisC();
+            gracefullyDisC(&acceptSocketSender);
+            gracefullyDisC(&acceptSocketReciever);
             break;
         }
-        //TODO: encodeHamming()
+        //TODO: addNoise()
         //sendToRecieverClient
     }while(statusRecieve == TRNS_SUCCEEDED);
 
@@ -202,150 +194,52 @@ void server_cleanup_2(SOCKET * mainSocket)
     server_cleanup_1();
 }
 
-gracefullyDisC()
+void gracefullyDisC(SOCKET * acceptSocket)
 {
+	int shutRes;
 
+	// sendfinaltransition
+	shutRes = shutdown(*acceptSocket, SD_SEND);
+	if ( shutRes == SOCKET_ERROR ) 
+	{
+        printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
+        assert(0);
+	}
+	closesocket(*acceptSocket);
 }
 
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-
-// static int FindFirstUnusedThreadSlot()
-// { 
-// 	int Ind;
-
-// 	for ( Ind = 0; Ind < NUM_OF_WORKER_THREADS; Ind++ )
-// 	{
-// 		if ( ThreadHandles[Ind] == NULL )
-// 			break;
-// 		else
-// 		{
-// 			// poll to check if thread finished running:
-// 			DWORD Res = WaitForSingleObject( ThreadHandles[Ind], 0 ); 
-				
-// 			if ( Res == WAIT_OBJECT_0 ) // this thread finished running
-// 			{				
-// 				CloseHandle( ThreadHandles[Ind] );
-// 				ThreadHandles[Ind] = NULL;
-// 				break;
-// 			}
-// 		}
-// 	}
-
-// 	return Ind;
-// }
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-
-// static void CleanupWorkerThreads()
-// {
-// 	int Ind; 
-
-// 	for ( Ind = 0; Ind < NUM_OF_WORKER_THREADS; Ind++ )
-// 	{
-// 		if ( ThreadHandles[Ind] != NULL )
-// 		{
-// 			// poll to check if thread finished running:
-// 			DWORD Res = WaitForSingleObject( ThreadHandles[Ind], INFINITE ); 
-				
-// 			if ( Res == WAIT_OBJECT_0 ) 
-// 			{
-// 				closesocket( ThreadInputs[Ind] );
-// 				CloseHandle( ThreadHandles[Ind] );
-// 				ThreadHandles[Ind] = NULL;
-// 				break;
-// 			}
-// 			else
-// 			{
-// 				printf( "Waiting for thread failed. Ending program\n" );
-// 				return;
-// 			}
-// 		}
-// 	}
-// }
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-
-//Service thread is the thread that opens for each successful client connection and "talks" to the client.
-// static DWORD ServiceThread( SOCKET *t_socket ) 
-// {
-// 	char SendStr[SEND_STR_SIZE];
-
-// 	BOOL Done = FALSE;
-// 	TransferResult_t SendRes;
-// 	TransferResult_t RecvRes;
-
-// 	strcpy( SendStr, "Welcome to this server!" );
-
-// 	SendRes = SendString( SendStr, *t_socket );
-	
-// 	if ( SendRes == TRNS_FAILED ) 
-// 	{
-// 		printf( "Service socket error while writing, closing thread.\n" );
-// 		closesocket( *t_socket );
-// 		return 1;
-// 	}
-	
-// 	while ( !Done ) 
-// 	{		
-// 		char *AcceptedStr = NULL;
-		
-// 		RecvRes = ReceiveString( &AcceptedStr , *t_socket );
-
-// 		if ( RecvRes == TRNS_FAILED )
-// 		{
-// 			printf( "Service socket error while reading, closing thread.\n" );
-// 			closesocket( *t_socket );
-// 			return 1;
-// 		}
-// 		else if ( RecvRes == TRNS_DISCONNECTED )
-// 		{
-// 			printf( "Connection closed while reading, closing thread.\n" );
-// 			closesocket( *t_socket ); //TODO: ALONACARINA add gracefully disconnect here
-// 			return 1;
-// 		}
-// 		else
-// 		{
-// 			printf( "Got string : %s\n", AcceptedStr );
-// 		}
-
-// 		//After reading a single line, checking to see what to do with it
-// 		//If got "hello" send back "what's up?"
-// 		//If got "how are you?" send back "great"
-// 		//If got "bye" send back "see ya!" and then end the thread
-// 		//Otherwise, send "I don't understand"
-		
-// 		if ( STRINGS_ARE_EQUAL( AcceptedStr , "hello" ) ) 
-// 			{ strcpy( SendStr, "what's up?" );} 
-// 		else if ( STRINGS_ARE_EQUAL( AcceptedStr , "how are you?" ) ) 
-// 			{ strcpy( SendStr, "great" ); }
-// 		else if ( STRINGS_ARE_EQUAL( AcceptedStr, "bye" )) 
-// 		{
-// 			strcpy( SendStr, "see ya!" );
-// 			Done = TRUE;
-// 		}
-// 		else 
-// 			{ strcpy( SendStr, "I don't understand" ); }
-
-// 		SendRes = SendString( SendStr, *t_socket );
-	
-// 		if ( SendRes == TRNS_FAILED ) 
-// 		{
-// 			printf( "Service socket error while writing, closing thread.\n" );
-// 			closesocket( *t_socket );
-// 			return 1;
-// 		}
-
-// 		free( AcceptedStr );		
-// 	}
-
-// 	printf("Conversation ended.\n");
-// 	closesocket( *t_socket );
-// 	return 0;
-// }
-
-
 int main(int argc, char * args[])
+
 {
 	MainServer();
 }
+
+// TransferResult_t ReceiveBuffer( char* OutputBuffer, int BytesToReceive, SOCKET sd )
+// {
+// 	char* CurPlacePtr = OutputBuffer;
+// 	int BytesJustTransferred;
+// 	int RemainingBytesToReceive = BytesToReceive;
+	
+// 	while ( RemainingBytesToReceive > 0 )  
+// 	{
+// 		/* send does not guarantee that the entire message is sent */
+// 		BytesJustTransferred = recv(sd, CurPlacePtr, RemainingBytesToReceive, 0);
+// 		if ( BytesJustTransferred == SOCKET_ERROR ) 
+// 		{
+// 			printf("recv() failed, error %d\n", WSAGetLastError() );
+// 			return TRNS_FAILED;
+// 		}		
+// 		else if ( BytesJustTransferred == 0 )
+// 			return TRNS_DISCONNECTED; // recv() returns zero if connection was gracefully disconnected.
+
+// 		RemainingBytesToReceive -= BytesJustTransferred;
+// 		CurPlacePtr += BytesJustTransferred; // <ISP> pointer arithmetic
+
+// 		if (*(CurPlacePtr-1) == EOF)
+// 		{
+// 			break;
+// 		}
+// 	}
+
+// 	return TRNS_SUCCEEDED;
+// }

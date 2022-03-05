@@ -16,7 +16,6 @@
 #define SERVER_PORT_SENDER 6342
 #define SERVER_PORT_RECIEVER 6343
 
-
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
 
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
