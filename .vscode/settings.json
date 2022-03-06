@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "socketshared.h": "c",
-        "socketsendrecvtools.h": "c"
+        "socketsendrecvtools.h": "c",
+        "channelserver.h": "c"
     }
 }

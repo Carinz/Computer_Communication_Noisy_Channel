@@ -10,8 +10,9 @@
 
 SOCKET senderSocket;
 int ipChannel ;
-int portChannel = 6342; 
+int portChannel = SERVER_PORT_SENDER; 
 FILE * filePtr;
+char * fileName;
 char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
 
 void mainSender()
@@ -38,8 +39,13 @@ void mainSender()
         sender_cleanup_1();
         assert(0);
     }
+    //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
+    while() //not EOF
+    {}
+
+    }
+
 
     shutRes = shutdown(senderSocket, SD_SEND);
 	if ( shutRes == SOCKET_ERROR ) 
@@ -47,7 +53,10 @@ void mainSender()
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
+    //recieve final trans
 	closesocket(senderSocket);
+
+
     // do
     // {
     //     //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
@@ -88,9 +97,10 @@ int createConnectSocketSender()
     }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = INADDR_ANY;
+    service.sin_addr.s_addr = inet_addr( S123 );
     service.sin_port = htons( portChannel ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	
+    
     connectRes = connect(senderSocket, (SOCKADDR*)&service, sizeof (service));
 
     printf("waiting to connect...");
@@ -132,13 +142,16 @@ int main(int argc, char * args[])
 {
     //ipChannel = atoi(args[1]);
     //portChannel = atoi(args[2]);
-    printf("enter file name:");
-    //kelet
     
-    mainSender();
-
-	// do{
-    //     mainSender();
-    // }while();
+    
+    //mainSender();
+    printf("enter file name:");
+    scanf("%s", fileName);
+    while(!strcmp(fileName, "quit"))
+	{
+        mainSender();
+        printf("enter file name:");
+        scanf("%s", fileName);
+    }
 }
 

@@ -51,34 +51,38 @@ void MainServer()
 	}
 
     createSocket(&socketSender, SERVER_PORT_SENDER);
-    createSocket(&socketReciever, SERVER_PORT_RECIEVER);
+    //createSocket(&socketReciever, SERVER_PORT_RECIEVER);
  
     /* The WinSock DLL is acceptable. Proceed. */
 
     printf( "Waiting for a client to connect...\n" );
     
 	clientConnect(&acceptSocketSender, &socketSender);
-	clientConnect(&acceptSocketReciever, &socketReciever);
+	//clientConnect(&acceptSocketReciever, &socketReciever);
 
-    do
-    {
-        statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
-        if (statusRecieve == TRNS_FAILED)
-        {
-            //TODO: handle
-            printf("FAIL!");
-            assert(0);
-        }
+    statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
+	printf("THE MESSAGE: %s", senderBuffer);
 
-        if (statusRecieve == TRNS_DISCONNECTED)
-        {
-            gracefullyDisC(&acceptSocketSender);
-            gracefullyDisC(&acceptSocketReciever);
-            break;
-        }
-        //TODO: addNoise()
-        //sendToRecieverClient
-    }while(statusRecieve == TRNS_SUCCEEDED);
+
+    // do
+    // {
+    //     statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
+    //     if (statusRecieve == TRNS_FAILED)
+    //     {
+    //         //TODO: handle
+    //         printf("FAIL!");
+    //         assert(0);
+    //     }
+
+    //     if (statusRecieve == TRNS_DISCONNECTED)
+    //     {
+    //         gracefullyDisC(&acceptSocketSender);
+    //         gracefullyDisC(&acceptSocketReciever);
+    //         break;
+    //     }
+    //     //TODO: addNoise()
+    //     //sendToRecieverClient
+    // }while(statusRecieve == TRNS_SUCCEEDED);
 
     
 
@@ -86,9 +90,6 @@ void MainServer()
     // while recieveBuffer return value >0 
     // gracefully shtdown
 
-//server_cleanup_3:
-
-//	CleanupWorkerThreads();
 
 }
 
@@ -112,29 +113,8 @@ void createSocket(SOCKET * mainSocket, u_short serverPort)
 		//goto server_cleanup_1;
     }
 
-    // Bind the socket.
-	/*
-		For a server to accept client connections, it must be bound to a network address within the system. 
-		The following code demonstrates how to bind a socket that has already been created to an IP address 
-		and port.
-		Client applications use the IP address and port to connect to the host network.
-		The sockaddr structure holds information regarding the address family, IP address, and port number. 
-		sockaddr_in is a subset of sockaddr and is used for IP version 4 applications.
-   */
-	// Create a sockaddr_in object and set its values.
-	// Declare variables
-
-	//Address = inet_addr( INADDR_ANY );
-	// if ( Address == INADDR_NONE )
-	// {
-	// 	printf("The string \"%s\" cannot be converted into an ip address. ending program.\n",
-	// 			INADDR_ANY );
-	// 	server_cleanup_2(mainSocket);
-    //     //assert(0);
-	// }
-
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = INADDR_ANY;
+    service.sin_addr.s_addr = inet_addr( S123 );
     service.sin_port = htons( serverPort ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	                                   //( which is big-endian ).
 	/*
