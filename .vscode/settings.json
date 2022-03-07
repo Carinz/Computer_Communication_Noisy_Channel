@@ -2,6 +2,12 @@
     "files.associations": {
         "socketshared.h": "c",
         "socketsendrecvtools.h": "c",
-        "channelserver.h": "c"
+        "channelserver.h": "c",
+        "senderclient.h": "c",
+        "stdio.h": "c",
+        "winsock2.h": "c",
+        "string.h": "c",
+        "assert.h": "c",
+        "stdlib.h": "c"
     }
 }

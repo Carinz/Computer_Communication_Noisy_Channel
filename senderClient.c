@@ -3,6 +3,7 @@
 #include <string.h>
 #include <winsock2.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include "senderClient.h"
 #include "socketShared.h"
@@ -12,13 +13,18 @@ SOCKET senderSocket;
 int ipChannel ;
 int portChannel = SERVER_PORT_SENDER; 
 FILE * filePtr;
-char * fileName;
-char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
+char * fileName; //TODO CHANGE
+//char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
+char lettersPacket[NO_LETTERS_PACKET];
 
 void mainSender()
 {
+    int i;
 	TransferResult_t statusRecieve;    
     int connectStatus, shutRes;
+    char * afterHamming;
+
+
 	// Initialize Winsock.
     WSADATA wsaData;
     int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
@@ -41,11 +47,28 @@ void mainSender()
     }
     //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    while() //not EOF
-    {}
+    printf("CLIENT CONNECT!");
 
+    filePtr = fopen(fileName, "r");
+    assert(filePtr);
+    lettersPacket[0] = fgetc(filePtr);
+
+    while(lettersPacket[0] != EOF) //not EOF
+    {
+        for(i=1 ; i<=NO_LETTERS_PACKET-1 ; i++) //reading next 12 left
+        {
+            lettersPacket[i] = fgetc(filePtr);
+        }
+
+        for(i=1 ; i<=4 ; i++) //actual sending
+        {
+            afterHamming = addHamming(i);
+            SendBuffer(afterHamming, 4, senderSocket);
+        }
+        lettersPacket[0] = fgetc(filePtr);
     }
 
+    fclose(filePtr);
 
     shutRes = shutdown(senderSocket, SD_SEND);
 	if ( shutRes == SOCKET_ERROR ) 
@@ -53,30 +76,12 @@ void mainSender()
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
-    //recieve final trans
+    //recieve final trans - maybe how many transmitted to server
 	closesocket(senderSocket);
 
+    //print how many bytes in file
+    //print how many sent ( /26 * 31)
 
-    // do
-    // {
-    //     //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
-
-    //     if (statusRecieve == TRNS_FAILED)
-    //     {
-    //         //TODO: handle
-    //         printf("FAIL!");
-    //         assert(0);
-    //     }
-
-    //     if (statusRecieve == TRNS_DISCONNECTED)
-    //     {
-    //         gracefullyDisC(&acceptSocketSender);
-    //         gracefullyDisC(&acceptSocketReciever);
-    //         break;
-    //     }
-    //     //TODO: addNoise()
-    //     //sendToRecieverClient
-    // }while(statusRecieve == TRNS_SUCCEEDED);
 
 }
 
@@ -138,16 +143,58 @@ TransferResult_t SendBuffer( const char* Buffer, int BytesToSend, SOCKET sd )
 	return TRNS_SUCCEEDED;
 }
 
+
+char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
+{
+    char * beforeHamming = (char*)calloc(4,sizeof(char));
+    char * newHamming;
+
+    int i, lowLim;
+    switch(noBlock)
+    {
+        case 1:
+        lowLim=0;
+        break;
+
+        case 2:
+        lowLim=3;
+        break;
+
+        case 3:
+        lowLim=6;
+        break;
+
+        case 4:
+        lowLim=9;
+        break;
+    }
+
+    for(i=0 ; i<4 ; i++)
+    {
+        beforeHamming[i]=lettersPacket[lowLim+i];
+    }
+
+    //newHamming = actualAddHam(beforeHamming);
+    //return newHamming;
+    return beforeHamming;
+}
+
+char * actualAddHam(char * beforeHamming)
+{
+    return NULL;
+}
+
+
 int main(int argc, char * args[])
 {
     //ipChannel = atoi(args[1]);
     //portChannel = atoi(args[2]);
     
-    
     //mainSender();
     printf("enter file name:");
-    scanf("%s", fileName);
-    while(!strcmp(fileName, "quit"))
+    //gets(fileName);
+    fileName=args[1];
+    while(strcmp(fileName, "quit"))
 	{
         mainSender();
         printf("enter file name:");

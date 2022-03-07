@@ -60,29 +60,29 @@ void MainServer()
 	clientConnect(&acceptSocketSender, &socketSender);
 	//clientConnect(&acceptSocketReciever, &socketReciever);
 
-    statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
-	printf("THE MESSAGE: %s", senderBuffer);
+    //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
+	//printf("THE MESSAGE: %s", senderBuffer);
 
+    do
+    {
+        statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
+        if (statusRecieve == TRNS_FAILED)
+        {
+            //TODO: handle
+            printf("FAIL!");
+            assert(0);
+        }
 
-    // do
-    // {
-    //     statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
-    //     if (statusRecieve == TRNS_FAILED)
-    //     {
-    //         //TODO: handle
-    //         printf("FAIL!");
-    //         assert(0);
-    //     }
-
-    //     if (statusRecieve == TRNS_DISCONNECTED)
-    //     {
-    //         gracefullyDisC(&acceptSocketSender);
-    //         gracefullyDisC(&acceptSocketReciever);
-    //         break;
-    //     }
-    //     //TODO: addNoise()
-    //     //sendToRecieverClient
-    // }while(statusRecieve == TRNS_SUCCEEDED);
+        if (statusRecieve == TRNS_DISCONNECTED)
+        {
+            gracefullyDisC(&acceptSocketSender);
+            gracefullyDisC(&acceptSocketReciever);
+            break;
+        }
+		printf("THE MESSAGE: %s\n", senderBuffer);
+        //TODO: addNoise()
+        //sendToRecieverClient
+    }while(statusRecieve == TRNS_SUCCEEDED);
 
     
 
