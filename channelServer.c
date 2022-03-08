@@ -76,7 +76,7 @@ void MainServer()
         if (statusRecieve == TRNS_DISCONNECTED)
         {
             gracefullyDisC(&acceptSocketSender);
-            gracefullyDisC(&acceptSocketReciever);
+            //gracefullyDisC(&acceptSocketReciever);
             break;
         }
 		printf("THE MESSAGE: %s\n", senderBuffer);
@@ -185,7 +185,7 @@ void gracefullyDisC(SOCKET * acceptSocket)
 	closesocket(*acceptSocket);
 }
 
-int main(int argc, char * args[])
+int main(int argc, char *argv[])
 
 {
 	MainServer();

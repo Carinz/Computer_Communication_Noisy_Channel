@@ -13,7 +13,7 @@ SOCKET senderSocket;
 int ipChannel ;
 int portChannel = SERVER_PORT_SENDER; 
 FILE * filePtr;
-char * fileName; //TODO CHANGE
+char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
 char lettersPacket[NO_LETTERS_PACKET];
 
@@ -77,6 +77,7 @@ void mainSender()
         assert(0);
 	}
     //recieve final trans - maybe how many transmitted to server
+
 	closesocket(senderSocket);
 
     //print how many bytes in file
@@ -185,15 +186,15 @@ char * actualAddHam(char * beforeHamming)
 }
 
 
-int main(int argc, char * args[])
+int main(int argc, char *argv[])
 {
     //ipChannel = atoi(args[1]);
     //portChannel = atoi(args[2]);
     
     //mainSender();
     printf("enter file name:");
-    //gets(fileName);
-    fileName=args[1];
+    gets(fileName);
+    //fileName=args[1];
     while(strcmp(fileName, "quit"))
 	{
         mainSender();
