@@ -182,6 +182,7 @@ void gracefullyDisC(SOCKET * acceptSocket)
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
+	printf("SHTTING DOWN");
 	closesocket(*acceptSocket);
 }
 

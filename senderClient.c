@@ -77,7 +77,7 @@ void mainSender()
         assert(0);
 	}
     //recieve final trans - maybe how many transmitted to server
-
+    printf("I AM CLUENT AND SHTTING");
 	closesocket(senderSocket);
 
     //print how many bytes in file
