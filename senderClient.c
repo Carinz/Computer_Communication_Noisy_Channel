@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 	{
         mainSender();
         printf("enter file name:");
-        scanf("%s", fileName);
+        gets(fileName);
     }
 }
 
