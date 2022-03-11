@@ -186,7 +186,9 @@ char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int p
 
 char * actualAddHam(char * beforeHamming)
 {
-    return NULL;
+    char* withHamming = (char*)calloc(4, sizeof(char));
+
+
 }
 
 
