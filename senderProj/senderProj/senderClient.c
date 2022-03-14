@@ -68,6 +68,7 @@ void mainSender()
         {
             afterHamming = addHamming(i);
             SendBuffer(afterHamming, 4, senderSocket);
+            //TODO: checking if there was an error with the sending
         }
         lettersPacket[0] = fgetc(filePtr);
     }

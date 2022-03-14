@@ -51,14 +51,14 @@ void MainServer()
 	}
 
     createSocket(&socketSender, SERVER_PORT_SENDER);
-    //createSocket(&socketReciever, SERVER_PORT_RECIEVER);
+    createSocket(&socketReciever, SERVER_PORT_RECIEVER);
  
     /* The WinSock DLL is acceptable. Proceed. */
 
     printf( "Waiting for a client to connect...\n" );
     
 	clientConnect(&acceptSocketSender, &socketSender);
-	//clientConnect(&acceptSocketReciever, &socketReciever);
+	clientConnect(&acceptSocketReciever, &socketReciever);
 
     //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
 	//printf("THE MESSAGE: %s", senderBuffer);
@@ -75,13 +75,13 @@ void MainServer()
 
         if (statusRecieve == TRNS_DISCONNECTED)
         {
-            gracefullyDisC(&acceptSocketSender);
-            //gracefullyDisC(&acceptSocketReciever);
+            gracefullyDisSender(&acceptSocketSender);
+            gracefullyDisReciever(&acceptSocketReciever);
             break;
         }
 		printf("THE MESSAGE: %s\n", senderBuffer);
         //TODO: addNoise()
-        //sendToRecieverClient
+        sendToRecieverClient()
     }while(statusRecieve == TRNS_SUCCEEDED);
 
     
@@ -171,7 +171,7 @@ void server_cleanup_2(SOCKET * mainSocket)
     server_cleanup_1();
 }
 
-void gracefullyDisC(SOCKET * acceptSocket)
+void gracefullyDiscSender(SOCKET * acceptSocket)
 {
 	int shutRes;
 
