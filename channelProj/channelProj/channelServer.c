@@ -37,8 +37,10 @@ char senderBuffer[SENDER_PACKET_SIZE];
 
 void MainServer()
 {
-	TransferResult_t statusRecieve;    
+    int noRetransBytes=0;
+    int noFlipBits;
 
+	TransferResult_t statusRecieve;    
 	// Initialize Winsock.
     WSADATA wsaData;
     int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
@@ -49,6 +51,9 @@ void MainServer()
 		// Tell the user that we could not find a usable WinSock DLL.                                  
 		return;
 	}
+
+    /*printf("sender socket : IP address = %s port = %s", ip, port);
+    printf("receiver socket : IP address = %s port = %s", ip, port);*/
 
     createSocket(&socketSender, SERVER_PORT_SENDER);
     //createSocket(&socketReciever, SERVER_PORT_RECIEVER);
@@ -82,10 +87,11 @@ void MainServer()
 		printf("THE MESSAGE: %s\n", senderBuffer);
         //TODO: addNoise()
         //sendToRecieverClient
+        //noRetransBytes += 31;
     }while(statusRecieve == TRNS_SUCCEEDED);
 
     
-
+    //printf("retransmitted %s bytes, flipped %s bits", noRetransBytes, noFlipBits);
     // recieve SIZE_BUFFER packet. happens until the packet has 0.
     // while recieveBuffer return value >0 
     // gracefully shtdown
@@ -187,37 +193,11 @@ void gracefullyDisC(SOCKET * acceptSocket)
 }
 
 int main(int argc, char *argv[])
-
 {
-	MainServer();
+    char doContinue [5];
+    do{
+        MainServer();
+        gets(doContinue);
+    }while(!strcmp(doContinue, "yes"));
 }
 
-//TransferResult_t ReceiveBuffer( char* OutputBuffer, int BytesToReceive, SOCKET sd )
-//{
-//	char* CurPlacePtr = OutputBuffer;
-//	int BytesJustTransferred;
-//	int RemainingBytesToReceive = BytesToReceive;
-//	
-//	while ( RemainingBytesToReceive > 0 )  
-//	{
-//		/* send does not guarantee that the entire message is sent */
-//		BytesJustTransferred = recv(sd, CurPlacePtr, RemainingBytesToReceive, 0);
-//		if ( BytesJustTransferred == SOCKET_ERROR ) 
-//		{
-//			printf("recv() failed, error %d\n", WSAGetLastError() );
-//			return TRNS_FAILED;
-//		}		
-//		else if ( BytesJustTransferred == 0 )
-//			return TRNS_DISCONNECTED; // recv() returns zero if connection was gracefully disconnected.
-//
-//		RemainingBytesToReceive -= BytesJustTransferred;
-//		CurPlacePtr += BytesJustTransferred; // <ISP> pointer arithmetic
-//
-//		if (*(CurPlacePtr-1) == EOF)
-//		{
-//			break;
-//		}
-//	}
-//
-//	return TRNS_SUCCEEDED;
-//}

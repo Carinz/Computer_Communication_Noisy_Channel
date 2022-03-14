@@ -1,8 +1,6 @@
-﻿  SocketSendRecvTools.c
-  senderClient.c
+﻿  senderClient.c
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(28,19): warning C4101: 'statusRecieve': unreferenced local variable
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(158,12): warning C4101: 'newHamming': unreferenced local variable
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(239,9): warning C4101: 'accumulativeBits': unreferenced local variable
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(293,9): warning C4013: 'gets' undefined; assuming extern returning int
-  Generating Code...
   senderProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\Debug\senderProj.exe
