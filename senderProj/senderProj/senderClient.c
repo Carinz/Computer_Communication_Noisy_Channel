@@ -20,6 +20,7 @@ FILE * filePtr;
 char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
 char lettersPacket[NO_LETTERS_PACKET];
+//char beforeHammingAligned[4];
 
 void mainSender()
 {
@@ -68,6 +69,7 @@ void mainSender()
         {
             afterHamming = addHamming(i);
             SendBuffer(afterHamming, 4, senderSocket);
+            //TODO: checking if there was an error with the sending
         }
         lettersPacket[0] = fgetc(filePtr);
     }
@@ -152,6 +154,8 @@ void sender_cleanup_1()
 char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
 {
     char * beforeHamming = (char*)calloc(4,sizeof(char));
+    char* beforeHammingAligned= (char*)calloc(4, sizeof(char));
+    char* finalHam = (char*)calloc(4, sizeof(char));
     char * newHamming;
 
     int i, lowLim;
@@ -179,14 +183,104 @@ char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int p
         beforeHamming[i]=lettersPacket[lowLim+i];
     }
 
-    //newHamming = actualAddHam(beforeHamming);
-    //return newHamming;
-    return beforeHamming;
+    alignedPacket(beforeHammingAligned, beforeHamming, noBlock); //beforeHammingAligned is updated
+    actualAddHam(finalHam, beforeHammingAligned);
+    return finalHam;
+    //return beforeHamming;
 }
 
-char * actualAddHam(char * beforeHamming)
+void alignedPacket(char * beforeHammingAligned, char * beforeHamming, int noBlock) //actually aligning the packet according to its noBlock
 {
-    return NULL;
+    //char* beforeHammingAligned;// = (char*)calloc(4, sizeof(char));
+    int forShift;
+    switch (noBlock)
+    {
+    case 1:
+        beforeHamming[3] = beforeHamming[3] & 3; // 3 = 0000 0011
+        forShift = *((int*)beforeHamming);
+        *(int*)beforeHammingAligned = forShift;
+        //return beforeHamming;
+        break;
+
+    case 2:
+        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
+        beforeHamming[0] = beforeHamming[0] & 252; // 252 = 1111 1100
+        beforeHamming[3] = beforeHamming[3] & 15; // 15 = 0000 1111
+        forShift = *((int*)beforeHamming);
+        forShift = forShift >> 2;
+        *(int*)beforeHammingAligned = forShift;
+        //return beforeHammingAligned;
+        break;
+
+    case 3:
+        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
+        beforeHamming[0] = beforeHamming[0] & 240; // 240 = 1111 0000
+        beforeHamming[3] = beforeHamming[3] & 63; // 63 = 0011 1111
+        forShift = *((int*)beforeHamming);
+        forShift = forShift >> 4;
+        *(int*)beforeHammingAligned = forShift;
+        //return beforeHammingAligned;
+        break;
+
+    case 4:
+        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
+        //beforeHamming[0] = beforeHamming[0] & 15; // 15 = 0000 1111
+        //beforeHamming[3] = beforeHamming[3] & 252; // 252 = 1111 1100
+        forShift = *((int*)beforeHamming);
+        forShift = forShift >> 6;
+        *(int*)beforeHammingAligned = forShift;
+        //return beforeHammingAligned;
+        break;
+    }
+}
+
+void actualAddHam(char* finalHamm, char* beforeHammingAligned)
+{
+    //char* withHamming = (char*)calloc(4, sizeof(char));
+    int accumulativeBits;
+    int tempXor=0;
+    int bits26Num = *((int*)beforeHammingAligned);
+                        
+    int b1, b2, b4, b8, b16, totalXors, bit31Num;
+    
+    b1 = bits26Num & 44739931; // 10 1010 1010 1010 1101 0101 1011
+    b1 = xorTree(b1);
+
+    b2 = bits26Num & 53687917; // 11 0011 0011 0011 0110 0110 1101
+    b2 = xorTree(b2);
+
+    b4 = bits26Num & 63162254; //11 1100 0011 1100 0111 1000 1110
+    b4 = xorTree(b4);
+
+    b8 = bits26Num & 66848752; //11 1111 1100 0000 0111 1111 0000
+    b8 = xorTree(b8);
+
+    b16 = bits26Num & 67106816;
+    b16 = xorTree(b16);
+
+    b1 = b1 << 26;
+    b2 = b2 << 27;
+    b4 = b4 << 28;
+    b8 = b8 << 29;
+    b16 = b16 << 30;
+
+    totalXors = b1 || b2 || b4 || b8 || b16;
+
+    bit31Num = bits26Num || totalXors;
+    *(int*)finalHamm = bit31Num;
+
+}
+
+int xorTree(unsigned int num)
+{
+    int retVal=0;
+    while (num > 0)
+    {
+        retVal = retVal ^ (num & 1);
+        num = num >> 1;
+    }
+    return retVal;
+    
 }
 
 
