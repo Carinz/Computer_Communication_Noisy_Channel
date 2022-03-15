@@ -1,2 +1,4 @@
 ﻿  SocketSendRecvTools.c
-  channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\channelProj\Debug\channelProj.exe
+  channelServer.c
+  Generating Code...
+  channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe

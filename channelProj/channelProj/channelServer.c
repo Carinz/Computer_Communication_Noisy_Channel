@@ -75,13 +75,13 @@ void MainServer()
 
         if (statusRecieve == TRNS_DISCONNECTED)
         {
-            gracefullyDisSender(&acceptSocketSender);
-            gracefullyDisReciever(&acceptSocketReciever);
+            //gracefullyDisSender(&acceptSocketSender);
+            //gracefullyDisReciever(&acceptSocketReciever);
             break;
         }
 		printf("THE MESSAGE: %s\n", senderBuffer);
         //TODO: addNoise()
-        sendToRecieverClient();
+        //sendToRecieverClient();
     }while(statusRecieve == TRNS_SUCCEEDED);
 
     
