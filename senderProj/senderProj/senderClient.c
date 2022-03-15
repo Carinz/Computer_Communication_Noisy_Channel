@@ -264,9 +264,9 @@ void actualAddHam(char* finalHamm, char* beforeHammingAligned)
     b8 = b8 << 29;
     b16 = b16 << 30;
 
-    totalXors = b1 || b2 || b4 || b8 || b16;
+    totalXors = b1 | b2 | b4 | b8 | b16;
 
-    bit31Num = bits26Num || totalXors;
+    bit31Num = bits26Num | totalXors;
     *(int*)finalHamm = bit31Num;
 
 }

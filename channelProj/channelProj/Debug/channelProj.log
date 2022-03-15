@@ -1,4 +1,5 @@
 ﻿  SocketSendRecvTools.c
   channelServer.c
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(194,13): warning C4013: 'gets' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(196,1): error C2143: syntax error: missing ')' before '}'
   Generating Code...
-  channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe
