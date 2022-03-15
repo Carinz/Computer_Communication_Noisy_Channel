@@ -9,7 +9,7 @@
 
 #include "Ws2tcpip.h"
 
-//#include "senderClient.h"
+#include "recieverClient.h"
 #include "../../socketShared.h"
 #include "../../SocketSendRecvTools.h"
 
@@ -32,7 +32,7 @@ void mainReciever()
     TransferResult_t statusRecieve;
     int connectStatus, shutRes;
     char* afterHamming;
-
+    FILE* fileptr;
 
     // Initialize Winsock.
     WSADATA wsaData;
@@ -58,6 +58,9 @@ void mainReciever()
 
     printf("CLIENT CONNECT!");
 
+    filePtr = fopen(fileName, "w");
+
+
     do
     {
         for (int i = 0; i < 4; i++) {
@@ -72,7 +75,7 @@ void mainReciever()
 
             if (statusRecieve == TRNS_DISCONNECTED)
             {
-                gracefullyDisC(&acceptSocketReciever);
+                gracefullyDiscFromChannel(&acceptSocketReciever);
                 //gracefullyDisC(&acceptSocketReciever);
                 break;
             }
@@ -168,47 +171,47 @@ void sender_cleanup_1()
 //}
 
 
-char* addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
-{
-    char* beforeHamming = (char*)calloc(4, sizeof(char));
-    char* newHamming;
+//char* addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
+//{
+//    char* beforeHamming = (char*)calloc(4, sizeof(char));
+//    char* newHamming;
+//
+//    int i, lowLim;
+//    switch (noBlock)
+//    {
+//    case 1:
+//        lowLim = 0;
+//        break;
+//
+//    case 2:
+//        lowLim = 3;
+//        break;
+//
+//    case 3:
+//        lowLim = 6;
+//        break;
+//
+//    case 4:
+//        lowLim = 9;
+//        break;
+//    }
+//
+//    for (i = 0; i < 4; i++)
+//    {
+//        beforeHamming[i] = lettersPacket[lowLim + i];
+//    }
+//
+//    //newHamming = actualAddHam(beforeHamming);
+//    //return newHamming;
+//    return beforeHamming;
+//}
 
-    int i, lowLim;
-    switch (noBlock)
-    {
-    case 1:
-        lowLim = 0;
-        break;
-
-    case 2:
-        lowLim = 3;
-        break;
-
-    case 3:
-        lowLim = 6;
-        break;
-
-    case 4:
-        lowLim = 9;
-        break;
-    }
-
-    for (i = 0; i < 4; i++)
-    {
-        beforeHamming[i] = lettersPacket[lowLim + i];
-    }
-
-    //newHamming = actualAddHam(beforeHamming);
-    //return newHamming;
-    return beforeHamming;
-}
-
-char* actualAddHam(char* beforeHamming)
-{
-    char* withHamming = (char*)calloc(4, sizeof(char));
-
-
-}
+//char* actualAddHam(char* beforeHamming)
+//{
+//    char* withHamming = (char*)calloc(4, sizeof(char));
+//
+//
+//}
 
 void reHamming()
 {
@@ -319,6 +322,11 @@ void mergingString() {
 
 }
 
+void gracefullyDiscFromChannel()
+{
+
+}
+
 int main(int argc, char* argv[])
 {
     //ipChannel = atoi(args[1]);
@@ -326,13 +334,14 @@ int main(int argc, char* argv[])
 
     //mainSender();
     printf("Welcome to the Reciever:");
-    //gets(fileName);
+    printf("enter file name:");
+    gets(fileName);
     //fileName=args[1];
     while (strcmp(fileName, "quit"))
     {
         mainReciever();
         printf("enter file name:");
-        //gets(fileName);
+        gets(fileName);
     }
 }
 
