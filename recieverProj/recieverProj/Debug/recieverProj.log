@@ -1,0 +1,16 @@
+﻿  SocketSendRecvTools.c
+  recieverClient.c
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(75,31): warning C4013: 'gracefullyDisC' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(83,49): warning C4047: '=': 'char' differs in levels of indirection from 'char *'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(31,9): warning C4101: 'i': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(34,11): warning C4101: 'afterHamming': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(240,17): warning C4013: 'xorTree' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(215,51): warning C4101: 'totalXors': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(215,62): warning C4101: 'bit31Num': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(306,36): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(312,36): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(318,38): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
+  Generating Code...
+recieverClient.obj : error LNK2019: unresolved external symbol _gracefullyDisC referenced in function _mainReciever
+recieverClient.obj : error LNK2019: unresolved external symbol _xorTree referenced in function _reHamming
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\Debug\recieverProj.exe : fatal error LNK1120: 2 unresolved externals
