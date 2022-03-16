@@ -316,7 +316,7 @@ void mergingString() {
     int *bits31Num = (int*)(lettersPacket);
     for (int i = 0; i < 4; i++)
     {
-        lettersPacket[4 * i] = lettersPacket[4 * i] & 33554431; //0000 0011 1111 1111 ... 1111 32bit
+        *(bits31Num+i) = *(bits31Num+i) & 33554431; //0000 0011 1111 1111 ... 1111 32bit
     }
     //first shirshur
     temp = lettersPacket[4] & 63; //0011 1111 
