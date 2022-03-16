@@ -144,71 +144,7 @@ void sender_cleanup_1()
     assert(0);
 }
 
-//TransferResult_t SendBuffer( const char* Buffer, int BytesToSend, SOCKET sd )
-//{
-//	const char* CurPlacePtr = Buffer;
-//	int BytesTransferred;
-//	int RemainingBytesToSend = BytesToSend;
-//	
-//	while ( RemainingBytesToSend > 0 )  
-//	{
-//		/* send does not guarantee that the entire message is sent */
-//		BytesTransferred = send (sd, CurPlacePtr, RemainingBytesToSend, 0);
-//		if ( BytesTransferred == SOCKET_ERROR ) 
-//		{
-//			printf("send() failed, error %d\n", WSAGetLastError() );
-//			return TRNS_FAILED;
-//		}
-//		
-//		RemainingBytesToSend -= BytesTransferred;
-//		CurPlacePtr += BytesTransferred; // <ISP> pointer arithmetic
-//	}
-//
-//	return TRNS_SUCCEEDED;
-//}
 
-
-char* addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
-{
-    char* beforeHamming = (char*)calloc(4, sizeof(char));
-    char* newHamming;
-
-    int i, lowLim;
-    switch (noBlock)
-    {
-    case 1:
-        lowLim = 0;
-        break;
-
-    case 2:
-        lowLim = 3;
-        break;
-
-    case 3:
-        lowLim = 6;
-        break;
-
-    case 4:
-        lowLim = 9;
-        break;
-    }
-
-    for (i = 0; i < 4; i++)
-    {
-        beforeHamming[i] = lettersPacket[lowLim + i];
-    }
-
-    //newHamming = actualAddHam(beforeHamming);
-    //return newHamming;
-    return beforeHamming;
-}
-
-char* actualAddHam(char* beforeHamming)
-{
-    char* withHamming = (char*)calloc(4, sizeof(char));
-
-
-}
 
 void reHamming()
 {
