@@ -18,7 +18,7 @@ int indexErr;
 int ipChannel;
 int portChannel = SERVER_PORT_RECIEVER;
 char lettersPacket[16];
-//char finalDecodedBuffer[13];
+char finalDecodedBuffer[13];
 FILE* filePtr;
 char fileName[100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
@@ -95,7 +95,7 @@ void mainReciever()
             
         }
         mergingString();
-        fputs(lettersPacket, filePtr);
+        fputs(finalDecodedBuffer, filePtr);
 
         bytesRecieved += 15.5; //TODO: check
         actualNoBytes += 13;
@@ -313,28 +313,44 @@ void changeErrorBit() {
 void mergingString() {
     //nullify all the hamming index bits
     char temp=0;
-    int *bits31Num = (int*)(lettersPacket);
+    unsigned int *bits31Num = (int*)(lettersPacket);
     for (int i = 0; i < 4; i++)
     {
         *(bits31Num+i) = *(bits31Num+i) & 33554431; //0000 0011 1111 1111 ... 1111 32bit
     }
     //first shirshur
+
     temp = lettersPacket[4] & 63; //0011 1111 
     lettersPacket[3] = temp<<2 | lettersPacket[3];
     //lettersPacket[3] = temp;
-    bits31Num = *(bits31Num+1) >> 6;
+    *(bits31Num + 1) = *(bits31Num+1) >> 6;
 
 
     //second shirshur
-    temp = lettersPacket[7] & 3; //0000 0011
-    lettersPacket[6] = temp<<6 | lettersPacket[6];
-    bits31Num = *(bits31Num+2) >> 2;
+    temp = lettersPacket[8] & 15; //0000 1111
+    lettersPacket[6] = temp<<4 | lettersPacket[6];
+    *(bits31Num + 2) = *(bits31Num+2) >> 4;
 
 
     //third shishur
-    temp = lettersPacket[10] & 15; //0000 1111
-    lettersPacket[9] = temp << 4 | lettersPacket[9];
-    bits31Num = *(bits31Num + 3) >> 4;
+    temp = lettersPacket[12] & 3; //0000 0011
+    lettersPacket[10] = temp << 6 | lettersPacket[10];
+    *(bits31Num + 3) = *(bits31Num + 3) >> 2;
+
+    finalDecodedBuffer[0] = lettersPacket[0];
+    finalDecodedBuffer[1] = lettersPacket[1];
+    finalDecodedBuffer[2] = lettersPacket[2];
+    finalDecodedBuffer[3] = lettersPacket[3];
+    finalDecodedBuffer[4] = lettersPacket[4];
+    finalDecodedBuffer[5] = lettersPacket[5];
+    finalDecodedBuffer[6] = lettersPacket[6];
+    finalDecodedBuffer[7] = lettersPacket[8];
+    finalDecodedBuffer[8] = lettersPacket[9];
+    finalDecodedBuffer[9] = lettersPacket[10];
+    finalDecodedBuffer[10] = lettersPacket[12];
+    finalDecodedBuffer[11] = lettersPacket[13];
+    finalDecodedBuffer[12] = lettersPacket[14];
+
 
 }
 

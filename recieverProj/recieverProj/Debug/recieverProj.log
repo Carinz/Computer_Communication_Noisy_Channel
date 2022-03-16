@@ -1,11 +1,10 @@
-﻿  recieverClient.c
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(87,42): warning C4013: 'calculateIndexErr' undefined; assuming extern returning int
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(36,24): warning C4101: 'shutRes': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(37,11): warning C4101: 'afterHamming': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(233,51): warning C4101: 'totalXors': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(233,62): warning C4101: 'bit31Num': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(325,36): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(331,36): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(337,38): warning C4047: '=': 'int *' differs in levels of indirection from 'int'
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(375,9): warning C4013: 'gets' undefined; assuming extern returning int
-  recieverProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\Debug\recieverProj.exe
+﻿  SocketSendRecvTools.c
+  recieverClient.c
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(87,42): warning C4013: 'calculateIndexErr' undefined; assuming extern returning int
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(36,24): warning C4101: 'shutRes': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(37,11): warning C4101: 'afterHamming': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(233,51): warning C4101: 'totalXors': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(233,62): warning C4101: 'bit31Num': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(391,9): warning C4013: 'gets' undefined; assuming extern returning int
+  Generating Code...
+LINK : fatal error LNK1104: cannot open file 'C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\Debug\recieverProj.exe'
