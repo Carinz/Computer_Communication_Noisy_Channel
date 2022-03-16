@@ -7,4 +7,4 @@ C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRe
 C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(233,62): warning C4101: 'bit31Num': unreferenced local variable
 C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(391,9): warning C4013: 'gets' undefined; assuming extern returning int
   Generating Code...
-LINK : fatal error LNK1104: cannot open file 'C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\Debug\recieverProj.exe'
+  recieverProj.vcxproj -> C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\recieverProj\Debug\recieverProj.exe
