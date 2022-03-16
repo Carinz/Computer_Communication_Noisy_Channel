@@ -16,23 +16,26 @@
 SOCKET recieverSocket;
 int indexErr;
 int ipChannel;
-int portChannel = SERVER_PORT_SENDER;
+int portChannel = SERVER_PORT_RECIEVER;
 char lettersPacket[16];
-char finalDecodedBuffer[13];
+//char finalDecodedBuffer[13];
 FILE* filePtr;
 char fileName[100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
 //char lettersPacket[NO_LETTERS_PACKET];
-SOCKET acceptSocketReciever;
+//SOCKET acceptSocketReciever;
 char recieveBuffer[SENDER_PACKET_SIZE];
 
 void mainReciever()
 {
-    int i;
+    //int i;
+    double bytesRecieved=0.0;
+    int j, tmpFliped, totalFliped=0, actualNoBytes=0;
+
     TransferResult_t statusRecieve;
     int connectStatus, shutRes;
     char* afterHamming;
-    FILE* fileptr;
+    //FILE* fileptr;
 
     // Initialize Winsock.
     WSADATA wsaData;
@@ -56,16 +59,15 @@ void mainReciever()
     }
     //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    printf("CLIENT CONNECT!");
+    printf("CLIENT CONNECT!\n");
 
     filePtr = fopen(fileName, "w");
-
 
     do
     {
         for (int i = 0; i < 4; i++) {
         
-            statusRecieve = ReceiveBuffer(recieveBuffer, SENDER_PACKET_SIZE, acceptSocketReciever);
+            statusRecieve = ReceiveBuffer(recieveBuffer, SENDER_PACKET_SIZE, recieverSocket);
             if (statusRecieve == TRNS_FAILED)
             {
                 //TODO: handle
@@ -75,40 +77,53 @@ void mainReciever()
 
             if (statusRecieve == TRNS_DISCONNECTED)
             {
-                gracefullyDiscFromChannel(&acceptSocketReciever);
+                gracefullyDiscFromChannel(&recieverSocket);
                 //gracefullyDisC(&acceptSocketReciever);
                 break;
             }
-                printf("THE MESSAGE: %s\n", recieveBuffer);
-                //for (j=0;j<4;j++)
-            reHamming();
-            changeErrorBit();
-            lettersPacket[4 * i] = recieveBuffer;
+
+            //printf("THE MESSAGE: %s\n", recieveBuffer);
+            //for (j=0;j<4;j++)
+            tmpFliped = calculateIndexErr();
+            totalFliped += tmpFliped;
+            //changeErrorBit();
+            for (j = 0; j < 4; j++)
+            {
+                lettersPacket[i * 4 + j] = recieveBuffer[j]; //only flipped bit
+            }
+            //lettersPacket[4 * i] = recieveBuffer; 
             
         }
         mergingString();
-        
+        fputs(lettersPacket, filePtr);
+
+        bytesRecieved += 15.5; //TODO: check
+        actualNoBytes += 13;
+
         
     } while (statusRecieve == TRNS_SUCCEEDED);
 
-    //filePtr = fopen(fileName, "r");
     //assert(filePtr);
     //lettersPacket[0] = fgetc(filePtr);
 
     
-    shutRes = shutdown(recieverSocket, SD_SEND);
+    /*shutRes = shutdown(recieverSocket, SD_SEND);
     if (shutRes == SOCKET_ERROR)
     {
         printf("shutdown failed with error %ld. Ending program\n", WSAGetLastError());
         assert(0);
-    }
+    }*/
     //recieve final trans - maybe how many transmitted to server
-    printf("I AM CLUENT AND SHTTING");
-    closesocket(recieverSocket);
+    /*printf("I AM CLUENT AND SHTTING\n");
+    closesocket(recieverSocket);*/
 
     //print how many bytes in file
     //print how many sent ( /26 * 31)
+    fclose(filePtr);
 
+    printf("recieved: %f bytes\n", bytesRecieved);
+    printf("wrote : %d bytes\n", actualNoBytes);
+   
 
 }
 
@@ -213,9 +228,9 @@ void sender_cleanup_1()
 //
 //}
 
-void reHamming()
+int calculateIndexErr()
 {
-    int b1, b2, b4, b8, b16, c1, c2, c4, c8, c16, totalXors, bit31Num, indexErr;
+    int b1, b2, b4, b8, b16, c1, c2, c4, c8, c16, totalXors, bit31Num;
     int bits31Num = *((int*)recieveBuffer);
 
     //chossing 27-31 bits
@@ -240,23 +255,23 @@ void reHamming()
 
     //calculation of Hamming bits- the index of the error bit
     c1 = bits31Num & 44739931; // 10 1010 1010 1010 1101 0101 1011 0000 00
-    c1 = xorTree(b1);
+    c1 = xorTree(c1);
     c1 = c1 ^ b1;
 
-    b2 = bits31Num & 53687917; // 11 0011 0011 0011 0110 0110 1101 0000 00
-    b2 = xorTree(b2);
+    c2 = bits31Num & 53687917; // 11 0011 0011 0011 0110 0110 1101 0000 00
+    c2 = xorTree(c2);
     c2 = c2 ^ b2;
 
-    b4 = bits31Num & 63162254; //11 1100 0011 1100 0111 1000 1110 0000 00
-    b4 = xorTree(b4);
+    c4 = bits31Num & 63162254; //11 1100 0011 1100 0111 1000 1110 0000 00
+    c4 = xorTree(c4);
     c4 = c4 ^ b4;
 
-    b8 = bits31Num & 66848752; //11 1111 1100 0000 0111 1111 0000 0000 00
-    b8 = xorTree(b8);
+    c8 = bits31Num & 66848752; //11 1111 1100 0000 0111 1111 0000 0000 00
+    c8 = xorTree(c8);
     c8 = c8 ^ b8;
 
-    b16 = bits31Num & 67106816;
-    b16 = xorTree(b16);
+    c16 = bits31Num & 67106816;
+    c16 = xorTree(c16);
     c16 = c16 ^ b16;
 
     //linking all the bits to one variable- the error bit index
@@ -275,9 +290,10 @@ void reHamming()
     else if (indexErr > 16)
         indexErr = indexErr - 5;
     else
-        return;
-
+        return 0;
+    //TODO: verify that its ok might be a problem
     changeErrorBit();
+    return 1;
 }
 
 //fixing the error bit 
@@ -290,7 +306,7 @@ void changeErrorBit() {
     bil = bil << (indexErr - 1);
     bits31Num = bits31Num ^ bil;
 
-    *(int*)recieveBuffer = bits31Num;
+    *((int*)recieveBuffer) = bits31Num;
     
 }
 
@@ -324,6 +340,27 @@ void mergingString() {
 
 void gracefullyDiscFromChannel()
 {
+    int shutRes;
+    
+    printf("I AM CLUENT AND SHTTING\n");
+    shutRes = shutdown(recieverSocket, SD_SEND);
+    if (shutRes == SOCKET_ERROR)
+    {
+        printf("shutdown failed with error %ld. Ending program\n", WSAGetLastError());
+        assert(0);
+    }
+    closesocket(recieverSocket); 
+}
+
+int xorTree(unsigned int num)
+{
+    int retVal = 0;
+    while (num > 0)
+    {
+        retVal = retVal ^ (num & 1);
+        num = num >> 1;
+    }
+    return retVal;
 
 }
 
@@ -333,14 +370,14 @@ int main(int argc, char* argv[])
     //portChannel = atoi(args[2]);
 
     //mainSender();
-    printf("Welcome to the Reciever:");
-    printf("enter file name:");
+    printf("Welcome to the Reciever:\n");
+    printf("enter file name:\n");
     gets(fileName);
     //fileName=args[1];
     while (strcmp(fileName, "quit"))
     {
         mainReciever();
-        printf("enter file name:");
+        printf("enter file name:\n");
         gets(fileName);
     }
 }

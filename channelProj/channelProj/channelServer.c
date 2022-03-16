@@ -40,7 +40,7 @@ void MainServer()
     int noRetransBytes=0;
     int noFlipBits;
 
-	TransferResult_t statusRecieve;    
+	TransferResult_t statusRecieve, statusSend;
 	// Initialize Winsock.
     WSADATA wsaData;
     int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
@@ -56,14 +56,14 @@ void MainServer()
     printf("receiver socket : IP address = %s port = %s", ip, port);*/
 
     createSocket(&socketSender, SERVER_PORT_SENDER);
-    //createSocket(&socketReciever, SERVER_PORT_RECIEVER);
+    createSocket(&socketReciever, SERVER_PORT_RECIEVER);
  
     /* The WinSock DLL is acceptable. Proceed. */
 
     printf( "Waiting for a client to connect...\n" );
     
 	clientConnect(&acceptSocketSender, &socketSender);
-	//clientConnect(&acceptSocketReciever, &socketReciever);
+	clientConnect(&acceptSocketReciever, &socketReciever);
 
     //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
 	//printf("THE MESSAGE: %s", senderBuffer);
@@ -80,17 +80,25 @@ void MainServer()
 
         if (statusRecieve == TRNS_DISCONNECTED)
         {
-            //gracefullyDisSender(&acceptSocketSender);
-            //gracefullyDisReciever(&acceptSocketReciever);
+            gracefullyDiscSender(&acceptSocketSender);
+            gracefullyDiscReciever(&acceptSocketReciever);
             break;
         }
 		printf("THE MESSAGE: %s\n", senderBuffer);
         //TODO: addNoise()
         //sendToRecieverClient
+        
+        statusSend = SendBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketReciever);
+        if (statusSend == TRNS_FAILED)
+        {
+            printf("PROBLEN WITH CHANNEL SENDING\n");
+            break;
+        }
+        
         //noRetransBytes += 31;
     }while(statusRecieve == TRNS_SUCCEEDED);
 
-    
+    printf("DONE!");
     //printf("retransmitted %s bytes, flipped %s bits", noRetransBytes, noFlipBits);
     // recieve SIZE_BUFFER packet. happens until the packet has 0.
     // while recieveBuffer return value >0 
@@ -188,8 +196,19 @@ void gracefullyDiscSender(SOCKET * acceptSocket)
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
-	printf("SHTTING DOWN");
+	printf("SHTTING DOWN SENDER\n");
 	closesocket(*acceptSocket);
+}
+
+void gracefullyDiscReciever(SOCKET* acceptSocket) //TODO: unite
+{
+    int shutRes = shutdown(*acceptSocket, SD_SEND);
+    if (shutRes == SOCKET_ERROR)
+    {
+        printf("shutdown failed with error %ld. Ending program\n", WSAGetLastError());
+        assert(0);
+    }
+    closesocket(*acceptSocket);
 }
 
 int main(int argc, char *argv[])
