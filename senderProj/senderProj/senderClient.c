@@ -24,7 +24,8 @@ char lettersPacket[NO_LETTERS_PACKET];
 
 void mainSender()
 {
-    int i;
+    int i, fileLen=0;
+    double bytesSent = 0.0;
 	TransferResult_t statusRecieve;    
     int connectStatus, shutRes;
     char * afterHamming;
@@ -52,7 +53,7 @@ void mainSender()
     }
     //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    printf("CLIENT CONNECT!");
+    printf("CLIENT CONNECT!\n");
 
     filePtr = fopen(fileName, "r");
     assert(filePtr);
@@ -64,6 +65,9 @@ void mainSender()
         {
             lettersPacket[i] = fgetc(filePtr);
         }
+
+        fileLen += 13;
+        bytesSent += 15.5; //TODO: check definition
 
         for(i=1 ; i<=4 ; i++) //actual sending
         {
@@ -82,12 +86,13 @@ void mainSender()
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
+
     //recieve final trans - maybe how many transmitted to server
-    printf("I AM CLUENT AND SHTTING");
+    printf("I AM CLUENT AND SHTTING\n");
 	closesocket(senderSocket);
 
-    //print how many bytes in file
-    //print how many sent ( /26 * 31)
+    printf("file length : %d bytes\n", fileLen);
+    printf("sent : %f bytes\n", bytesSent); //TODO: CHECK
 
 
 }
@@ -264,9 +269,9 @@ void actualAddHam(char* finalHamm, char* beforeHammingAligned)
     b8 = b8 << 29;
     b16 = b16 << 30;
 
-    totalXors = b1 || b2 || b4 || b8 || b16;
+    totalXors = b1 | b2 | b4 | b8 | b16;
 
-    bit31Num = bits26Num || totalXors;
+    bit31Num = bits26Num | totalXors;
     *(int*)finalHamm = bit31Num;
 
 }
@@ -290,13 +295,13 @@ int main(int argc, char *argv[])
     //portChannel = atoi(args[2]);
     
     //mainSender();
-    printf("enter file name:");
+    printf("enter file name:\n");
     gets(fileName);
     //fileName=args[1];
     while(strcmp(fileName, "quit"))
 	{
         mainSender();
-        printf("enter file name:");
+        printf("enter file name:\n");
         gets(fileName);
     }
 }
