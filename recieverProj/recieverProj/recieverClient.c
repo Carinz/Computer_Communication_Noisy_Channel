@@ -17,14 +17,14 @@ SOCKET recieverSocket;
 int indexErr;
 int ipChannel;
 int portChannel = SERVER_PORT_RECIEVER;
-char lettersPacket[16];
-char finalDecodedBuffer[13];
+unsigned char lettersPacket[16];
+char finalDecodedBuffer[14];
 FILE* filePtr;
 char fileName[100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
 //char lettersPacket[NO_LETTERS_PACKET];
 //SOCKET acceptSocketReciever;
-char recieveBuffer[SENDER_PACKET_SIZE];
+unsigned char recieveBuffer[SENDER_PACKET_SIZE];
 
 void mainReciever()
 {
@@ -34,7 +34,7 @@ void mainReciever()
 
     TransferResult_t statusRecieve;
     int connectStatus, shutRes;
-    char* afterHamming;
+    unsigned char* afterHamming;
     //FILE* fileptr;
 
     // Initialize Winsock.
@@ -316,20 +316,20 @@ void mergingString() {
     unsigned int *bits31Num = (int*)(lettersPacket);
     for (int i = 0; i < 4; i++)
     {
-        *(bits31Num+i) = *(bits31Num+i) & 33554431; //0000 0011 1111 1111 ... 1111 32bit
+        *(bits31Num+i) = *(bits31Num+i) & 67108863; //0000 0011 1111 1111 ... 1111 32bit
     }
     //first shirshur
 
     temp = lettersPacket[4] & 63; //0011 1111 
     lettersPacket[3] = temp<<2 | lettersPacket[3];
     //lettersPacket[3] = temp;
-    *(bits31Num + 1) = *(bits31Num+1) >> 6;
+    *(bits31Num + 1) = (*(bits31Num+1)) >> 6;
 
 
     //second shirshur
     temp = lettersPacket[8] & 15; //0000 1111
     lettersPacket[6] = temp<<4 | lettersPacket[6];
-    *(bits31Num + 2) = *(bits31Num+2) >> 4;
+    *(bits31Num + 2) = (*(bits31Num+2)) >> 4;
 
 
     //third shishur
@@ -350,7 +350,7 @@ void mergingString() {
     finalDecodedBuffer[10] = lettersPacket[12];
     finalDecodedBuffer[11] = lettersPacket[13];
     finalDecodedBuffer[12] = lettersPacket[14];
-
+    finalDecodedBuffer[13] = '\0';
 
 }
 

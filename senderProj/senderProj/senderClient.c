@@ -19,7 +19,7 @@ int portChannel = SERVER_PORT_SENDER;
 FILE * filePtr;
 char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
-char lettersPacket[NO_LETTERS_PACKET];
+unsigned char lettersPacket[NO_LETTERS_PACKET];
 //char beforeHammingAligned[4];
 
 void mainSender()
@@ -28,7 +28,7 @@ void mainSender()
     double bytesSent = 0.0;
 	TransferResult_t statusRecieve;    
     int connectStatus, shutRes;
-    char * afterHamming;
+    unsigned char * afterHamming;
 
 
 	// Initialize Winsock.
@@ -59,7 +59,7 @@ void mainSender()
     assert(filePtr);
     lettersPacket[0] = fgetc(filePtr);
 
-    while(lettersPacket[0] != EOF) //not EOF
+    while(lettersPacket[0] != 255) //not EOF
     {
         for(i=1 ; i<=NO_LETTERS_PACKET-1 ; i++) //reading next 12 left
         {
@@ -158,10 +158,10 @@ void sender_cleanup_1()
 
 char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
 {
-    char * beforeHamming = (char*)calloc(4,sizeof(char));
-    char* beforeHammingAligned= (char*)calloc(4, sizeof(char));
-    char* finalHam = (char*)calloc(4, sizeof(char));
-    char * newHamming;
+    unsigned char * beforeHamming = (unsigned char*)calloc(4,sizeof(unsigned char));
+    unsigned char* beforeHammingAligned= (unsigned char*)calloc(4, sizeof(unsigned char));
+    unsigned char* finalHam = (unsigned char*)calloc(4, sizeof(unsigned char));
+    unsigned char * newHamming;
 
     int i, lowLim;
     switch(noBlock)
@@ -194,7 +194,7 @@ char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int p
     //return beforeHamming;
 }
 
-void alignedPacket(char * beforeHammingAligned, char * beforeHamming, int noBlock) //actually aligning the packet according to its noBlock
+void alignedPacket(unsigned char * beforeHammingAligned, unsigned char * beforeHamming, int noBlock) //actually aligning the packet according to its noBlock
 {
     //char* beforeHammingAligned;// = (char*)calloc(4, sizeof(char));
     int forShift;
@@ -239,7 +239,7 @@ void alignedPacket(char * beforeHammingAligned, char * beforeHamming, int noBloc
     }
 }
 
-void actualAddHam(char* finalHamm, char* beforeHammingAligned)
+void actualAddHam(unsigned char* finalHamm, unsigned char* beforeHammingAligned)
 {
     //char* withHamming = (char*)calloc(4, sizeof(char));
     int accumulativeBits;

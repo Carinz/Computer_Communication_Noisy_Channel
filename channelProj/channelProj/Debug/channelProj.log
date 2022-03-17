@@ -1,6 +1,6 @@
 ﻿  SocketSendRecvTools.c
   channelServer.c
-C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\channelProj\channelProj\channelServer.c(41,9): warning C4101: 'noFlipBits': unreferenced local variable
-C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\channelProj\channelProj\channelServer.c(219,13): warning C4013: 'gets' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(41,9): warning C4101: 'noFlipBits': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(219,13): warning C4013: 'gets' undefined; assuming extern returning int
   Generating Code...
-  channelProj.vcxproj -> C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\channelProj\Debug\channelProj.exe
+  channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe

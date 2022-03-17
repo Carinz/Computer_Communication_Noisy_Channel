@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\SocketSendRecvTools.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="checkFileprint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="recieverClient.h">

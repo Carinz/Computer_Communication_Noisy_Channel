@@ -33,7 +33,7 @@ SOCKET socketReciever = INVALID_SOCKET;
 SOCKET acceptSocketSender;
 SOCKET acceptSocketReciever;
 
-char senderBuffer[SENDER_PACKET_SIZE];
+unsigned char senderBuffer[SENDER_PACKET_SIZE];
 
 void MainServer()
 {
