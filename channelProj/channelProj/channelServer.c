@@ -38,7 +38,7 @@ unsigned char senderBuffer[SENDER_PACKET_SIZE];
 void MainServer()
 {
     int noRetransBytes=0;
-    int noFlipBits;
+    int noFlipBits=0;
 
 	TransferResult_t statusRecieve, statusSend;
 	// Initialize Winsock.
@@ -52,15 +52,15 @@ void MainServer()
 		return;
 	}
 
-    /*printf("sender socket : IP address = %s port = %s", ip, port);
-    printf("receiver socket : IP address = %s port = %s", ip, port);*/
+    printf("sender socket : IP address = %d port = %d", ip, port);
+    printf("receiver socket : IP address = %d port = %d", ip, port);
 
     createSocket(&socketSender, SERVER_PORT_SENDER);
     createSocket(&socketReciever, SERVER_PORT_RECIEVER);
  
     /* The WinSock DLL is acceptable. Proceed. */
 
-    printf( "Waiting for a client to connect...\n" );
+    //printf( "Waiting for a client to connect...\n" );
     
 	clientConnect(&acceptSocketSender, &socketSender);
 	clientConnect(&acceptSocketReciever, &socketReciever);
@@ -99,7 +99,8 @@ void MainServer()
     }while(statusRecieve == TRNS_SUCCEEDED);
 
     printf("DONE!");
-    //printf("retransmitted %s bytes, flipped %s bits", noRetransBytes, noFlipBits);
+    printf("retransmitted %d bytes, flipped %d bits", noRetransBytes, noFlipBits);
+
     // recieve SIZE_BUFFER packet. happens until the packet has 0.
     // while recieveBuffer return value >0 
     // gracefully shtdown
@@ -216,6 +217,7 @@ int main(int argc, char *argv[])
     char doContinue [5];
     do{
         MainServer();
+        printf("continue?");
         gets(doContinue);
     }while(!strcmp(doContinue, "yes"));
 }

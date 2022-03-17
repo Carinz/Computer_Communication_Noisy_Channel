@@ -94,12 +94,16 @@ void mainReciever()
             //lettersPacket[4 * i] = recieveBuffer; 
             
         }
-        mergingString();
-        fputs(finalDecodedBuffer, filePtr);
 
-        bytesRecieved += 15.5; //TODO: check
-        actualNoBytes += 13;
+        if (statusRecieve == TRNS_SUCCEEDED)
+        {
+            mergingString();
+            //fwrite(finalDecodedBuffer, 1, 13, filePtr);
+            fputs(finalDecodedBuffer, filePtr);
 
+            bytesRecieved += 15.5; //TODO: check
+            actualNoBytes += 13;
+        }
         
     } while (statusRecieve == TRNS_SUCCEEDED);
 
