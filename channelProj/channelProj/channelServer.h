@@ -13,13 +13,12 @@
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 void MainServer();
-void createSocket(SOCKET * mainSocket, u_short serverPort);
+void createSocket(SOCKET * mainSocket);
 void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket);
 void server_cleanup_1();
 void server_cleanup_2(SOCKET * mainSocket);
-void gracefullyDiscSender(SOCKET* acceptSocket);
-
-void gracefullyDiscReciever(SOCKET * acceptSocket);
+void gracefullyDiscSender();
+void gracefullyDiscReciever();
 //static DWORD ServiceThread( SOCKET *t_socket ) ;
 //TransferResult_t ReceiveBuffer( char* OutputBuffer, int BytesToReceive, SOCKET sd );
 

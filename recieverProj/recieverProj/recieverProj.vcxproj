@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\SocketSendRecvTools.c" />
-    <ClCompile Include="checkFileprint.c" />
     <ClCompile Include="recieverClient.c" />
   </ItemGroup>
   <ItemGroup>

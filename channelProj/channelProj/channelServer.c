@@ -35,28 +35,45 @@ SOCKET acceptSocketReciever;
 
 unsigned char senderBuffer[SENDER_PACKET_SIZE];
 
+void initializeServer()
+{
+    // Initialize Winsock.
+    WSADATA wsaData;
+    int StartupRes = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    if (StartupRes != NO_ERROR)
+    {
+        printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
+        // Tell the user that we could not find a usable WinSock DLL.                                  
+        return;
+    }
+
+    createSocket(&socketSender);
+    createSocket(&socketReciever);
+}
+
 void MainServer()
 {
     int noRetransBytes=0;
     int noFlipBits=0;
 
 	TransferResult_t statusRecieve, statusSend;
-	// Initialize Winsock.
-    WSADATA wsaData;
-    int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
+	//// Initialize Winsock.
+ //   WSADATA wsaData;
+ //   int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
 
-    if ( StartupRes != NO_ERROR )
-	{
-        printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
-		// Tell the user that we could not find a usable WinSock DLL.                                  
-		return;
-	}
+ //   if ( StartupRes != NO_ERROR )
+	//{
+ //       printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
+	//	// Tell the user that we could not find a usable WinSock DLL.                                  
+	//	return;
+	//}
 
-    printf("sender socket : IP address = %d port = %d", ip, port);
-    printf("receiver socket : IP address = %d port = %d", ip, port);
+    /*printf("sender socket : IP address = %d port = %d", ip, port);
+    printf("receiver socket : IP address = %d port = %d", ip, port);*/
 
-    createSocket(&socketSender, SERVER_PORT_SENDER);
-    createSocket(&socketReciever, SERVER_PORT_RECIEVER);
+    /*createSocket(&socketSender, SERVER_PORT_SENDER);
+    createSocket(&socketReciever, SERVER_PORT_RECIEVER);*/
  
     /* The WinSock DLL is acceptable. Proceed. */
 
@@ -80,8 +97,8 @@ void MainServer()
 
         if (statusRecieve == TRNS_DISCONNECTED)
         {
-            gracefullyDiscSender(&acceptSocketSender);
-            gracefullyDiscReciever(&acceptSocketReciever);
+            gracefullyDiscSender();
+            gracefullyDiscReciever();
             break;
         }
 		printf("THE MESSAGE: %s\n", senderBuffer);
@@ -108,7 +125,7 @@ void MainServer()
 
 }
 
-void createSocket(SOCKET * mainSocket, u_short serverPort)
+void createSocket(SOCKET * mainSocket)
 {
     
 	//unsigned long Address;
@@ -129,8 +146,8 @@ void createSocket(SOCKET * mainSocket, u_short serverPort)
     }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = inet_addr( S123 );
-    service.sin_port = htons( serverPort ); //The htons function converts a u_short from host to TCP/IP network byte order 
+    service.sin_addr.s_addr = inet_addr( "0.0.0.0" ); //TODO: conctract the port in next line!
+    service.sin_port = htons( 0 ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	                                   //( which is big-endian ).
 	/*
 		The three lines following the declaration of sockaddr_in service are used to set up 
@@ -186,39 +203,50 @@ void server_cleanup_2(SOCKET * mainSocket)
     server_cleanup_1();
 }
 
-void gracefullyDiscSender(SOCKET * acceptSocket)
+void gracefullyDiscSender()
 {
 	int shutRes;
+    //SOCKET socketSender = INVALID_SOCKET;
 
 	// sendfinaltransition
-	shutRes = shutdown(*acceptSocket, SD_SEND);
+	shutRes = shutdown(acceptSocketSender, SD_SEND);
 	if ( shutRes == SOCKET_ERROR ) 
 	{
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
 	printf("SHTTING DOWN SENDER\n");
-	closesocket(*acceptSocket);
+	closesocket(acceptSocketSender);
+    //closesocket(socketSender);
 }
 
-void gracefullyDiscReciever(SOCKET* acceptSocket) //TODO: unite
+void gracefullyDiscReciever() //TODO: unite
 {
-    int shutRes = shutdown(*acceptSocket, SD_SEND);
+    int shutRes = shutdown(acceptSocketReciever, SD_SEND);
     if (shutRes == SOCKET_ERROR)
     {
         printf("shutdown failed with error %ld. Ending program\n", WSAGetLastError());
         assert(0);
     }
-    closesocket(*acceptSocket);
+    closesocket(acceptSocketReciever);
+    //closesocket(socketReciever);
+
 }
 
 int main(int argc, char *argv[])
 {
-    char doContinue [5];
+    char doContinue[5];// = {'/0'};
+
+    initializeServer();
+
     do{
         MainServer();
         printf("continue?");
         gets(doContinue);
     }while(!strcmp(doContinue, "yes"));
+
+    closesocket(socketSender);
+    closesocket(socketReciever);
+
 }
 

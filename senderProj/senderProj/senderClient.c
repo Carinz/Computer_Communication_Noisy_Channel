@@ -14,8 +14,8 @@
 #include "../../SocketSendRecvTools.h"
 
 SOCKET senderSocket;
-int ipChannel ;
-int portChannel = SERVER_PORT_SENDER; 
+int ipChannel;
+int portChannel; 
 FILE * filePtr;
 char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
 //char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
@@ -114,7 +114,7 @@ int createConnectSocketSender()
     }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = inet_addr( S123 );
+    service.sin_addr.s_addr = inet_addr( ipChannel );
     service.sin_port = htons( portChannel ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	
     
@@ -291,8 +291,8 @@ int xorTree(unsigned int num)
 
 int main(int argc, char *argv[])
 {
-    //ipChannel = atoi(args[1]);
-    //portChannel = atoi(args[2]);
+    ipChannel = atoi(argv[1]);
+    portChannel = atoi(argv[2]);
     
     //mainSender();
     printf("enter file name:\n");

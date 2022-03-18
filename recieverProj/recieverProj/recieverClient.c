@@ -16,7 +16,7 @@
 SOCKET recieverSocket;
 int indexErr;
 int ipChannel;
-int portChannel = SERVER_PORT_RECIEVER;
+int portChannel;
 unsigned char lettersPacket[16];
 char finalDecodedBuffer[14];
 FILE* filePtr;
@@ -148,7 +148,7 @@ int createConnectSocketReciever()
     }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = inet_addr(S123);
+    service.sin_addr.s_addr = inet_addr(ipChannel);
     service.sin_port = htons(portChannel); //The htons function converts a u_short from host to TCP/IP network byte order 
 
 
@@ -386,9 +386,9 @@ int xorTree(unsigned int num)
 
 int main(int argc, char* argv[])
 {
-    //ipChannel = atoi(args[1]);
-    //portChannel = atoi(args[2]);
-
+   
+    ipChannel = atoi(argv[1]);
+    portChannel = atoi(argv[2]);
     //mainSender();
     printf("Welcome to the Reciever:\n");
     printf("enter file name:\n");

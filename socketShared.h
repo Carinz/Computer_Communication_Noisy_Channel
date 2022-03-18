@@ -13,8 +13,8 @@
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 //#define SERVER_ADDRESS_STR INADDR_ANY
-#define SERVER_PORT_SENDER 27015
-#define SERVER_PORT_RECIEVER 27016
+#define SERVER_PORT_SENDER 0
+#define SERVER_PORT_RECIEVER 0
 
 #define SENDER_PACKET_SIZE 4 //TODO: change
 #define RECIEVER_PACKET_SIZE 6
@@ -24,7 +24,7 @@
 #define NO_BITS_BEFORE_ENCODE 26
 #define NO_LETTERS_PACKET 13
 
-#define S123 "127.0.0.1"
+//#define S123 "127.0.0.1"
 
 #define STRINGS_ARE_EQUAL( Str1, Str2 ) ( strcmp( (Str1), (Str2) ) == 0 )
 
