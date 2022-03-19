@@ -1,3 +1,6 @@
 ﻿  channelServer.c
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(245,13): warning C4013: 'gets' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(55,33): warning C4020: 'createSocket': too many actual parameters
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(56,35): warning C4020: 'createSocket': too many actual parameters
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(133,1): warning C4029: declared formal parameter list different from definition
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(256,13): warning C4013: 'gets' undefined; assuming extern returning int
   channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe

@@ -14,7 +14,7 @@
 #include "../../SocketSendRecvTools.h"
 
 SOCKET senderSocket;
-int ipChannel;
+char * ipChannel;
 int portChannel; 
 FILE * filePtr;
 char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
@@ -291,7 +291,7 @@ int xorTree(unsigned int num)
 
 int main(int argc, char *argv[])
 {
-    ipChannel = atoi(argv[1]);
+    ipChannel = argv[1];
     portChannel = atoi(argv[2]);
     
     //mainSender();

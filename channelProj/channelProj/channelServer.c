@@ -33,6 +33,10 @@ SOCKET socketReciever = INVALID_SOCKET;
 SOCKET acceptSocketSender;
 SOCKET acceptSocketReciever;
 
+int senderPort;
+int recieverPort;
+
+
 unsigned char senderBuffer[SENDER_PACKET_SIZE];
 
 void initializeServer()
@@ -48,8 +52,8 @@ void initializeServer()
         return;
     }
 
-    createSocket(&socketSender);
-    createSocket(&socketReciever);
+    createSocket(&socketSender, "sender");
+    createSocket(&socketReciever, "reciever");
 }
 
 void MainServer()
@@ -125,12 +129,12 @@ void MainServer()
 
 }
 
-void createSocket(SOCKET * mainSocket)
+void createSocket(SOCKET * mainSocket, char * type)
 {
     
 	//unsigned long Address;
 	SOCKADDR_IN service;
-	int bindRes;
+	int bindRes, size;
 	int ListenRes;
 
 
@@ -146,9 +150,12 @@ void createSocket(SOCKET * mainSocket)
     }
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = inet_addr( "0.0.0.0" ); //TODO: conctract the port in next line!
+    service.sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO: conctract the port in next line!
+
+    //service.sin_addr.s_addr = htonl(INADDR_ANY); //TODO: conctract the port in next line!
     service.sin_port = htons( 0 ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	                                   //( which is big-endian ).
+
 	/*
 		The three lines following the declaration of sockaddr_in service are used to set up 
 		the sockaddr structure: 
@@ -174,6 +181,10 @@ void createSocket(SOCKET * mainSocket)
         printf( "Failed listening on socket, error %ld.\n", WSAGetLastError() );
 		server_cleanup_2(mainSocket);
 	}
+
+    size = sizeof(service);
+    getsockname(*mainSocket, (struct sockaddr*)&service, &size);
+    printf("%s socket: IP address = %s port = %d\n", type, inet_ntoa(service.sin_addr), ntohs(service.sin_port));
 
 }
 

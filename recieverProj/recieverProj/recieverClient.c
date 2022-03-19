@@ -15,7 +15,7 @@
 
 SOCKET recieverSocket;
 int indexErr;
-int ipChannel;
+char * ipChannel;
 int portChannel;
 unsigned char lettersPacket[16];
 char finalDecodedBuffer[14];
@@ -387,7 +387,7 @@ int xorTree(unsigned int num)
 int main(int argc, char* argv[])
 {
    
-    ipChannel = atoi(argv[1]);
+    ipChannel = argv[1];
     portChannel = atoi(argv[2]);
     //mainSender();
     printf("Welcome to the Reciever:\n");

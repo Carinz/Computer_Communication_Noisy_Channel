@@ -1,7 +1,5 @@
 ﻿  senderClient.c
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(29,19): warning C4101: 'statusRecieve': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(117,52): warning C4047: 'function': 'const char *' differs in levels of indirection from 'int'
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(117,42): warning C4024: 'inet_addr': different types for formal and actual parameter 1
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(164,21): warning C4101: 'newHamming': unreferenced local variable
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,36): warning C4028: formal parameter 1 different from declaration
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,74): warning C4028: formal parameter 2 different from declaration
