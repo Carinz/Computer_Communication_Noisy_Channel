@@ -10,6 +10,8 @@ Last updated by Amnon Drory, Winter 2011.
 #define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#include <stdlib.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <winsock2.h>
@@ -35,9 +37,15 @@ SOCKET acceptSocketReciever;
 
 int senderPort;
 int recieverPort;
+int whichNoise;
+int det_n;
+int prob;
+int randSeed;
+char* whichMode;
 
+unsigned char beforeNoiseBuffer[SENDER_PACKET_SIZE];
+unsigned char afterNoiseBuffer[SENDER_PACKET_SIZE];
 
-unsigned char senderBuffer[SENDER_PACKET_SIZE];
 
 void initializeServer()
 {
@@ -59,9 +67,10 @@ void initializeServer()
 void MainServer()
 {
     int noRetransBytes=0;
-    int noFlipBits=0;
+    int noFlipBitsTotal=0, tempNoFlip=0;
 
 	TransferResult_t statusRecieve, statusSend;
+    int startIndex = det_n - 1;
 	//// Initialize Winsock.
  //   WSADATA wsaData;
  //   int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
@@ -91,7 +100,7 @@ void MainServer()
 
     do
     {
-        statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
+        statusRecieve = ReceiveBuffer(beforeNoiseBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
         if (statusRecieve == TRNS_FAILED)
         {
             //TODO: handle
@@ -105,11 +114,16 @@ void MainServer()
             gracefullyDiscReciever();
             break;
         }
-		printf("THE MESSAGE: %s\n", senderBuffer);
-        //TODO: addNoise()
+		printf("THE MESSAGE: %s\n", beforeNoiseBuffer);
+
+        startIndex = addNoise(startIndex, &tempNoFlip); //start index is relevant only in deterministic
+
+        noFlipBitsTotal += tempNoFlip;
+
+        // in addNoiseDet function, for the first loop we will reset firstIndex=n-1
         //sendToRecieverClient
         
-        statusSend = SendBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketReciever);
+        statusSend = SendBuffer(afterNoiseBuffer, SENDER_PACKET_SIZE, acceptSocketReciever);
         if (statusSend == TRNS_FAILED)
         {
             printf("PROBLEN WITH CHANNEL SENDING\n");
@@ -120,12 +134,84 @@ void MainServer()
     }while(statusRecieve == TRNS_SUCCEEDED);
 
     printf("DONE!");
-    printf("retransmitted %d bytes, flipped %d bits", noRetransBytes, noFlipBits);
+    printf("retransmitted %d bytes, flipped %d bits", noRetransBytes, noFlipBitsTotal);
 
     // recieve SIZE_BUFFER packet. happens until the packet has 0.
     // while recieveBuffer return value >0 
     // gracefully shtdown
 
+
+}
+
+int addNoise(int startIndex, int * noFlipBits) //returns start index to next packet if deterministic
+{
+    if (!strcmp(whichMode,"-d")) // deterministric
+    {
+        return addNoiseDet(startIndex,&noFlipBits);
+    }
+
+    else //random
+    {
+        addNoiseRand(&noFlipBits);
+    }
+}
+
+int addNoiseRand(int * noflipBits)
+{
+    int i;
+    int doesItFlip; //1 in probability prob/2^16 ; 0 in 1-prob
+
+    int numToXor=0;
+
+    for (i = 0; i < 32; i++)
+    {
+        doesItFlip = randIndicator();
+        numToXor = numToXor ^ (doesItFlip << i);
+    }
+    numToXor = numToXor ^ *((int*)beforeNoiseBuffer);
+    *(int*)afterNoiseBuffer = numToXor;
+
+
+}
+
+int randIndicator()
+{
+    int rand15 = rand();
+    int rand2 = rand() % 2;
+
+    int finalRand = rand15 | rand2 << 15;
+    if (finalRand <= prob)
+    {
+        return 1; //flip!
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
+int addNoiseDet(int startIndexi, int * noFlipped)
+{
+    unsigned int* bits31Num = (int*)(beforeNoiseBuffer);
+    int a = 1; 
+    int counter = startIndexi, startIndex;
+
+    int tempFlipped=0;
+
+    a << startIndexi;
+    *bits31Num = *bits31Num ^ a;
+    while (counter < 31)
+    {
+        a = a << det_n;
+        counter += det_n;
+        *bits31Num = *bits31Num ^ a;
+        tempFlipped++;
+    }
+    startIndex = det_n + (counter - det_n)-31;
+
+    *noFlipped = tempFlipped;
+    return (startIndex);
 
 }
 
@@ -247,6 +333,26 @@ void gracefullyDiscReciever() //TODO: unite
 int main(int argc, char *argv[])
 {
     char doContinue[5];// = {'/0'};
+    
+    if (argc == 3)
+    {
+        whichMode = argv[1];
+        det_n = argv[2];
+    }
+
+    else if (argc == 4)
+    {
+        whichMode = argv[1];
+        prob = argv[2];
+        randSeed = argv[3];
+        srand(randSeed);
+    }
+
+    else
+    {
+        printf("number of args dont match!");
+        assert(0);
+    }
 
     initializeServer();
 

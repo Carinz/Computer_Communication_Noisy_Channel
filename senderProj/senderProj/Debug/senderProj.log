@@ -1,10 +1,12 @@
-﻿  senderClient.c
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(29,19): warning C4101: 'statusRecieve': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(164,21): warning C4101: 'newHamming': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,36): warning C4028: formal parameter 1 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,74): warning C4028: formal parameter 2 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(242,34): warning C4028: formal parameter 1 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(242,60): warning C4028: formal parameter 2 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(245,9): warning C4101: 'accumulativeBits': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(299,9): warning C4013: 'gets' undefined; assuming extern returning int
-  senderProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\Debug\senderProj.exe
+﻿  SocketSendRecvTools.c
+  senderClient.c
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(29,19): warning C4101: 'statusRecieve': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(164,21): warning C4101: 'newHamming': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,36): warning C4028: formal parameter 1 different from declaration
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(197,74): warning C4028: formal parameter 2 different from declaration
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(242,34): warning C4028: formal parameter 1 different from declaration
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(242,60): warning C4028: formal parameter 2 different from declaration
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(245,9): warning C4101: 'accumulativeBits': unreferenced local variable
+C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\senderProj\senderClient.c(299,9): warning C4013: 'gets' undefined; assuming extern returning int
+  Generating Code...
+  senderProj.vcxproj -> C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\senderProj\Debug\senderProj.exe
