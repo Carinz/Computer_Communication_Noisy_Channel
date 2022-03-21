@@ -24,7 +24,7 @@ unsigned char lettersPacket[NO_LETTERS_PACKET];
 
 void mainSender()
 {
-    int i, fileLen=0;
+    int i, fileLen=0, bytesInt=0;
     double bytesSent = 0.0;
 	TransferResult_t statusRecieve;    
     int connectStatus, shutRes;
@@ -39,7 +39,8 @@ void mainSender()
 	{
         printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
 		// Tell the user that we could not find a usable WinSock DLL.                                  
-		return;
+		//return;
+        assert(0);
 	}
 
     connectStatus = createConnectSocketSender();
@@ -48,12 +49,12 @@ void mainSender()
     {
         printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
 		// Tell the user that we could not find a usable WinSock DLL.                                  
-        sender_cleanup_1();
+        //sender_cleanup_1();
         assert(0);
     }
     //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    printf("CLIENT CONNECT!\n");
+    //printf("CLIENT CONNECT!\n");
 
     filePtr = fopen(fileName, "r");
     assert(filePtr);
@@ -88,11 +89,12 @@ void mainSender()
 	}
 
     //recieve final trans - maybe how many transmitted to server
-    printf("I AM CLUENT AND SHTTING\n");
+    //printf("I AM CLUENT AND SHTTING\n");
 	closesocket(senderSocket);
+    bytesInt = (int)bytesSent;
 
-    printf("file length : %d bytes\n", fileLen);
-    printf("sent : %f bytes\n", bytesSent); //TODO: CHECK
+    printf("file length: %d bytes\n", fileLen);
+    printf("sent: %d bytes\n", bytesInt); //TODO: CHECK
 
 
 }
@@ -108,11 +110,11 @@ int createConnectSocketSender()
     if ( senderSocket == INVALID_SOCKET ) 
 	{
         printf( "Error at socketSender( ): %ld\n", WSAGetLastError( ) );
-        sender_cleanup_1();
-        //assert(0);
+        //sender_cleanup_1();
+        assert(0);
 		//goto server_cleanup_1;
     }
-
+    portChannel = 63106; //TODO: DELETE
     service.sin_family = AF_INET;
     service.sin_addr.s_addr = inet_addr( ipChannel );
     service.sin_port = htons( portChannel ); //The htons function converts a u_short from host to TCP/IP network byte order 
@@ -120,17 +122,17 @@ int createConnectSocketSender()
     
     connectRes = connect(senderSocket, (SOCKADDR*)&service, sizeof (service));
 
-    printf("waiting to connect...");
+    //printf("waiting to connect...");
 
     return connectRes;
 }
 
-void sender_cleanup_1()
-{
-    if ( WSACleanup() == SOCKET_ERROR )		
-		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
-        assert(0);
-}
+//void sender_cleanup_1()
+//{
+//    if ( WSACleanup() == SOCKET_ERROR )		
+//		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
+//        assert(0);
+//}
 
 //TransferResult_t SendBuffer( const char* Buffer, int BytesToSend, SOCKET sd )
 //{

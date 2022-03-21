@@ -1,5 +1,9 @@
-﻿  SocketSendRecvTools.c
-  channelServer.c
-C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\channelProj\channelProj\channelServer.c(256,13): warning C4013: 'gets' undefined; assuming extern returning int
-  Generating Code...
-  channelProj.vcxproj -> C:\Users\Alona\Documents\computerCommunicationProj\Proj1\computerCommunicationRep\channelProj\Debug\channelProj.exe
+﻿  channelServer.c
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(31,1): warning C4005: 'RAND_MAX': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdlib.h(348): message : see previous definition of 'RAND_MAX'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(121,30): warning C4013: 'addNoise' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(153,27): warning C4013: 'addNoiseDet' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(158,28): warning C4013: 'addNoiseRand' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(171,35): warning C4013: 'randIndicator' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(375,13): warning C4013: 'gets' undefined; assuming extern returning int
+  channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe

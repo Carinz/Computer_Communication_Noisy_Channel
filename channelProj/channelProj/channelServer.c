@@ -28,6 +28,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 //#define MAX_LOOPS 2
 #define SEND_STR_SIZE 35
+#define RAND_MAX 0x7FFF;
 //SOCKET mainSocket = INVALID_SOCKET;
 SOCKET socketSender = INVALID_SOCKET;
 SOCKET socketReciever = INVALID_SOCKET;
@@ -55,19 +56,20 @@ void initializeServer()
 
     if (StartupRes != NO_ERROR)
     {
-        printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
-        // Tell the user that we could not find a usable WinSock DLL.                                  
-        return;
+        printf("error %ld at WSAStartup(), ending program.\n", WSAGetLastError());
+        // Tell the user that we could not find a usable WinSock DLL.   
+        assert(0);
+        //return;
     }
 
-    createSocket(&socketSender, "sender");
-    createSocket(&socketReciever, "reciever");
+    createSocket(&socketSender, "sender", 63106);
+    createSocket(&socketReciever, "reciever", 63107);
 }
 
 void MainServer()
 {
-    int noRetransBytes=0;
-    int noFlipBitsTotal=0, tempNoFlip=0;
+    double noRetransBytes=0;
+    int noFlipBitsTotal=0, tempNoFlip=0, noRetransBytesInt=0;
 
 	TransferResult_t statusRecieve, statusSend;
     int startIndex = det_n - 1;
@@ -104,7 +106,7 @@ void MainServer()
         if (statusRecieve == TRNS_FAILED)
         {
             //TODO: handle
-            printf("FAIL!");
+            printf("failed with recieving from sender\n");
             assert(0);
         }
 
@@ -114,8 +116,8 @@ void MainServer()
             gracefullyDiscReciever();
             break;
         }
-		printf("THE MESSAGE: %s\n", beforeNoiseBuffer);
-
+		//printf("THE MESSAGE: %s\n", beforeNoiseBuffer);
+        tempNoFlip = 0;
         startIndex = addNoise(startIndex, &tempNoFlip); //start index is relevant only in deterministic
 
         noFlipBitsTotal += tempNoFlip;
@@ -127,14 +129,15 @@ void MainServer()
         if (statusSend == TRNS_FAILED)
         {
             printf("PROBLEN WITH CHANNEL SENDING\n");
-            break;
+            assert(0);
         }
         
-        //noRetransBytes += 31;
+        noRetransBytes += 3.875;
     }while(statusRecieve == TRNS_SUCCEEDED);
 
-    printf("DONE!");
-    printf("retransmitted %d bytes, flipped %d bits", noRetransBytes, noFlipBitsTotal);
+    //printf("DONE!");
+    noRetransBytesInt = (int)noRetransBytes;
+    printf("retransmitted %d bytes, flipped %d bits\n", noRetransBytesInt, noFlipBitsTotal);
 
     // recieve SIZE_BUFFER packet. happens until the packet has 0.
     // while recieveBuffer return value >0 
@@ -143,16 +146,16 @@ void MainServer()
 
 }
 
-int addNoise(int startIndex, int * noFlipBits) //returns start index to next packet if deterministic
+int addNoise(int tmpStartIndex, int * noFlipBits) //returns start index to next packet if deterministic
 {
     if (!strcmp(whichMode,"-d")) // deterministric
     {
-        return addNoiseDet(startIndex,&noFlipBits);
+        return addNoiseDet(tmpStartIndex,noFlipBits);
     }
 
     else //random
     {
-        addNoiseRand(&noFlipBits);
+        return addNoiseRand(noFlipBits);
     }
 }
 
@@ -166,11 +169,12 @@ int addNoiseRand(int * noflipBits)
     for (i = 0; i < 32; i++)
     {
         doesItFlip = randIndicator();
-        numToXor = numToXor ^ (doesItFlip << i);
+        *noflipBits += doesItFlip;
+        numToXor = numToXor | (doesItFlip << i);
     }
     numToXor = numToXor ^ *((int*)beforeNoiseBuffer);
     *(int*)afterNoiseBuffer = numToXor;
-
+    return 0;
 
 }
 
@@ -179,7 +183,7 @@ int randIndicator()
     int rand15 = rand();
     int rand2 = rand() % 2;
 
-    int finalRand = rand15 | rand2 << 15;
+    int finalRand = rand15 | (rand2 << 15);
     if (finalRand <= prob)
     {
         return 1; //flip!
@@ -191,18 +195,19 @@ int randIndicator()
 }
 
 
-int addNoiseDet(int startIndexi, int * noFlipped)
+int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
 {
     unsigned int* bits31Num = (int*)(beforeNoiseBuffer);
     int a = 1; 
-    int counter = startIndexi, startIndex;
+    int counter = tmpStartIndex;
 
     int tempFlipped=0;
 
-    a << startIndexi;
+    a = a << tmpStartIndex;
     //*bits31Num = *bits31Num ^ a;
     if (counter >= 31)
-        startIndex = counter - 31;// det_n + (counter - det_n) - 31;
+        tmpStartIndex = counter - 31;// det_n + (counter - det_n) - 31;
+
     else
     {
         do
@@ -213,15 +218,16 @@ int addNoiseDet(int startIndexi, int * noFlipped)
             //*bits31Num = *bits31Num ^ a;
             tempFlipped++;
         } while (counter < 31);
-        startIndex = counter - 31;// det_n + (counter - det_n) - 31;
+        tmpStartIndex = counter - 31;// det_n + (counter - det_n) - 31;
     }
 
+    *(int*)afterNoiseBuffer = *bits31Num;
     *noFlipped = tempFlipped;
-    return (startIndex);
+    return (tmpStartIndex);
 
 }
 
-void createSocket(SOCKET * mainSocket, char * type)
+void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM FIELD
 {
     
 	//unsigned long Address;
@@ -235,19 +241,18 @@ void createSocket(SOCKET * mainSocket, char * type)
 
     if ( *mainSocket == INVALID_SOCKET ) 
 	{
-        printf( "Error at socket( ): %ld\n", WSAGetLastError( ) );
-        server_cleanup_1();
-        //assert(0);
-		//goto server_cleanup_1;
-    }
+        printf( "Error at createSocket: %ld\n", WSAGetLastError() );
+        assert(0);
+	}
 
     service.sin_family = AF_INET;
     service.sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO: conctract the port in next line!
 
     //service.sin_addr.s_addr = htonl(INADDR_ANY); //TODO: conctract the port in next line!
-    service.sin_port = htons( 0 ); //The htons function converts a u_short from host to TCP/IP network byte order 
+    //service.sin_port = htons( 0 ); //The htons function converts a u_short from host to TCP/IP network byte order 
 	                                   //( which is big-endian ).
 
+    service.sin_port = htons(num); //TODO: DELETE AND LEAVE THE ABOVE LINE
 	/*
 		The three lines following the declaration of sockaddr_in service are used to set up 
 		the sockaddr structure: 
@@ -261,9 +266,9 @@ void createSocket(SOCKET * mainSocket, char * type)
     bindRes = bind( *mainSocket, ( SOCKADDR* ) &service, sizeof( service ) );
 	if ( bindRes == SOCKET_ERROR ) 
 	{
-        printf( "bind( ) failed with error %ld. Ending program\n", WSAGetLastError( ) );
-		server_cleanup_2(mainSocket);
-        //assert(0);
+        printf( "bind() failed with error %ld. Ending program\n", WSAGetLastError() );
+		//server_cleanup_2(mainSocket);
+        assert(0);
 	}
     
     // Listen on the Socket.
@@ -271,7 +276,8 @@ void createSocket(SOCKET * mainSocket, char * type)
     if ( ListenRes == SOCKET_ERROR ) 
 	{
         printf( "Failed listening on socket, error %ld.\n", WSAGetLastError() );
-		server_cleanup_2(mainSocket);
+		//server_cleanup_2(mainSocket);
+        assert(0);
 	}
 
     size = sizeof(service);
@@ -287,24 +293,25 @@ void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket)
 		{
 			printf( "Accepting connection with client failed, error %ld\n", WSAGetLastError() ) ; 
 			//server_cleanup_3(); //TODO: do all gracefully closing like cleanup_3 do in thread function
+            assert(0);
 		}
 
-    printf( "Client Connected.\n" );
+    //printf( "Client Connected.\n" );
 }
 
-void server_cleanup_1()
-{
-    if ( WSACleanup() == SOCKET_ERROR )		
-		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
-        assert(0);
-}
+//void server_cleanup_1()
+//{
+//    if ( WSACleanup() == SOCKET_ERROR )		
+//		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
+//        assert(0);
+//}
 
-void server_cleanup_2(SOCKET * mainSocket)
-{
-    if ( closesocket( *mainSocket ) == SOCKET_ERROR )
-		printf("Failed to close MainSocket, error %ld. Ending program\n", WSAGetLastError() ); 
-    server_cleanup_1();
-}
+//void server_cleanup_2(SOCKET * mainSocket)
+//{
+//    if ( closesocket( *mainSocket ) == SOCKET_ERROR )
+//		printf("Failed to close MainSocket, error %ld. Ending program\n", WSAGetLastError() ); 
+//    server_cleanup_1();
+//}
 
 void gracefullyDiscSender()
 {
@@ -318,7 +325,7 @@ void gracefullyDiscSender()
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
-	printf("SHTTING DOWN SENDER\n");
+	//printf("SHTTING DOWN SENDER\n");
 	closesocket(acceptSocketSender);
     //closesocket(socketSender);
 }
@@ -343,20 +350,20 @@ int main(int argc, char *argv[])
     if (argc == 3)
     {
         whichMode = argv[1];
-        det_n = argv[2];
+        det_n = atoi(argv[2]);
     }
 
     else if (argc == 4)
     {
         whichMode = argv[1];
-        prob = argv[2];
-        randSeed = argv[3];
+        prob = atoi(argv[2]);
+        randSeed = atoi(argv[3]);
         srand(randSeed);
     }
 
     else
     {
-        printf("number of args dont match!");
+        printf("number of args dont match!\n");
         assert(0);
     }
 
@@ -364,7 +371,7 @@ int main(int argc, char *argv[])
 
     do{
         MainServer();
-        printf("continue?");
+        printf("continue? (yes/no)\n");
         gets(doContinue);
     }while(!strcmp(doContinue, "yes"));
 

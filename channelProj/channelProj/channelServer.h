@@ -13,7 +13,7 @@
 /*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 void MainServer();
-void createSocket(SOCKET * mainSocket, char * type);
+void createSocket(SOCKET * mainSocket, char * type, int); //TODO: DELETE INT
 void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket);
 void server_cleanup_1();
 void server_cleanup_2(SOCKET * mainSocket);

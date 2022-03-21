@@ -30,10 +30,10 @@ void mainReciever()
 {
     //int i;
     double bytesRecieved=0.0;
-    int j, tmpFliped, totalFliped=0, actualNoBytes=0;
+    int j, tmpFliped=0, actualNoBytes=0, bytesRecievedInt=0;
 
     TransferResult_t statusRecieve;
-    int connectStatus, shutRes;
+    int connectStatus, shutRes, noCorrected=0;
     unsigned char* afterHamming;
     //FILE* fileptr;
 
@@ -45,7 +45,8 @@ void mainReciever()
     {
         printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
         // Tell the user that we could not find a usable WinSock DLL.                                  
-        return;
+        assert(0);
+        //return;
     }
 
     connectStatus = createConnectSocketReciever();
@@ -54,14 +55,15 @@ void mainReciever()
     {
         printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
         // Tell the user that we could not find a usable WinSock DLL.                                  
-        sender_cleanup_1();
+        //sender_cleanup_1();
         assert(0);
     }
     //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    printf("CLIENT CONNECT!\n");
+    //printf("CLIENT CONNECT!\n");
 
     filePtr = fopen(fileName, "w");
+    assert(filePtr);
 
     do
     {
@@ -71,7 +73,7 @@ void mainReciever()
             if (statusRecieve == TRNS_FAILED)
             {
                 //TODO: handle
-                printf("FAIL!");
+                printf("failed with recieving from channel\n");
                 assert(0);
             }
 
@@ -85,7 +87,7 @@ void mainReciever()
             //printf("THE MESSAGE: %s\n", recieveBuffer);
             //for (j=0;j<4;j++)
             tmpFliped = calculateIndexErr();
-            totalFliped += tmpFliped;
+            noCorrected += tmpFliped;
             //changeErrorBit();
             for (j = 0; j < 4; j++)
             {
@@ -125,8 +127,11 @@ void mainReciever()
     //print how many sent ( /26 * 31)
     fclose(filePtr);
 
-    printf("recieved: %f bytes\n", bytesRecieved);
-    printf("wrote : %d bytes\n", actualNoBytes);
+    bytesRecievedInt = (int)bytesRecieved;
+
+    printf("recieved: %d bytes\n", bytesRecievedInt);
+    printf("wrote: %d bytes\n", actualNoBytes);
+    printf("corrected %d errors\n", noCorrected);
    
 
 }
@@ -142,11 +147,12 @@ int createConnectSocketReciever()
     if (recieverSocket == INVALID_SOCKET)
     {
         printf("Error at socketSender( ): %ld\n", WSAGetLastError());
-        sender_cleanup_1();
-        //assert(0);
+        //sender_cleanup_1();
+        assert(0);
         //goto server_cleanup_1;
     }
 
+    portChannel = 63107; //TODO: DELETE
     service.sin_family = AF_INET;
     service.sin_addr.s_addr = inet_addr(ipChannel);
     service.sin_port = htons(portChannel); //The htons function converts a u_short from host to TCP/IP network byte order 
@@ -154,17 +160,17 @@ int createConnectSocketReciever()
 
     connectRes = connect(recieverSocket, (SOCKADDR*)&service, sizeof(service));
 
-    printf("waiting to connect...");
+    //printf("waiting to connect...");
 
     return connectRes;
 }
 
-void sender_cleanup_1()
-{
-    if (WSACleanup() == SOCKET_ERROR)
-        printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError());
-    assert(0);
-}
+//void sender_cleanup_1()
+//{
+//    if (WSACleanup() == SOCKET_ERROR)
+//        printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError());
+//    assert(0);
+//}
 
 //TransferResult_t SendBuffer( const char* Buffer, int BytesToSend, SOCKET sd )
 //{
@@ -279,22 +285,26 @@ int calculateIndexErr()
     c16 = c16 ^ b16;
 
     //linking all the bits to one variable- the error bit index
-    indexErr = c16 | (c8 << 1) | (c4 << 2) | (c2 << 3) | (c1 << 4);
+    indexErr = c1 | (c2 << 1) | (c4 << 2) | (c8 << 3) | (c16 << 4);
 
     //convertion of the error bit index
-    if (indexErr == 3)
-        indexErr = indexErr - 2;
+    if (indexErr == 0)
+        return 0;
 
-    else if (indexErr > 4 && indexErr < 8)
+    
+    if (indexErr == 3)
         indexErr = indexErr - 3;
 
-    else if (indexErr > 8 && indexErr < 16)
+    else if (indexErr > 4 && indexErr < 8)
         indexErr = indexErr - 4;
 
-    else if (indexErr > 16)
+    else if (indexErr > 8 && indexErr < 16)
         indexErr = indexErr - 5;
+
+    else if (indexErr > 16)
+        indexErr = indexErr - 6;
     else
-        return 0;
+        return 1;
     //TODO: verify that its ok might be a problem
     changeErrorBit();
     return 1;
@@ -307,7 +317,7 @@ void changeErrorBit() {
     //int copyBuffer = bits31Num;
     int bil = 1;
 
-    bil = bil << (indexErr - 1);
+    bil = bil << (indexErr);
     bits31Num = bits31Num ^ bil;
 
     *((int*)recieveBuffer) = bits31Num;
@@ -362,7 +372,7 @@ void gracefullyDiscFromChannel()
 {
     int shutRes;
     
-    printf("I AM CLUENT AND SHTTING\n");
+    //printf("I AM CLUENT AND SHTTING\n");
     shutRes = shutdown(recieverSocket, SD_SEND);
     if (shutRes == SOCKET_ERROR)
     {
@@ -390,7 +400,7 @@ int main(int argc, char* argv[])
     ipChannel = argv[1];
     portChannel = atoi(argv[2]);
     //mainSender();
-    printf("Welcome to the Reciever:\n");
+    //printf("Welcome to the Reciever:\n");
     printf("enter file name:\n");
     gets(fileName);
     //fileName=args[1];
