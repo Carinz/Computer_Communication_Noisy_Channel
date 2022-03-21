@@ -200,15 +200,21 @@ int addNoiseDet(int startIndexi, int * noFlipped)
     int tempFlipped=0;
 
     a << startIndexi;
-    *bits31Num = *bits31Num ^ a;
-    while (counter < 31)
+    //*bits31Num = *bits31Num ^ a;
+    if (counter >= 31)
+        startIndex = counter - 31;// det_n + (counter - det_n) - 31;
+    else
     {
-        a = a << det_n;
-        counter += det_n;
-        *bits31Num = *bits31Num ^ a;
-        tempFlipped++;
+        do
+        {
+            *bits31Num = *bits31Num ^ a;
+            a = a << det_n;
+            counter += det_n;
+            //*bits31Num = *bits31Num ^ a;
+            tempFlipped++;
+        } while (counter < 31);
+        startIndex = counter - 31;// det_n + (counter - det_n) - 31;
     }
-    startIndex = det_n + (counter - det_n)-31;
 
     *noFlipped = tempFlipped;
     return (startIndex);
