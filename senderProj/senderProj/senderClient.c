@@ -17,16 +17,14 @@ SOCKET senderSocket;
 char * ipChannel;
 int portChannel; 
 FILE * filePtr;
-char fileName [100];//[6] = {'c','.','t','x','t','\0'}; //TODO CHANGE
-//char bufferSend [SENDER_PACKET_SIZE] = {'H', 'e', 'l', 'l', 'o', '\0'};
+char fileName [100];
 unsigned char lettersPacket[NO_LETTERS_PACKET];
-//char beforeHammingAligned[4];
 
 void mainSender()
 {
     int i, fileLen=0, bytesInt=0;
     double bytesSent = 0.0;
-	TransferResult_t statusRecieve;    
+	TransferResult_t statusSend;
     int connectStatus, shutRes;
     unsigned char * afterHamming;
 
@@ -39,7 +37,6 @@ void mainSender()
 	{
         printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
 		// Tell the user that we could not find a usable WinSock DLL.                                  
-		//return;
         assert(0);
 	}
 
@@ -49,12 +46,9 @@ void mainSender()
     {
         printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
 		// Tell the user that we could not find a usable WinSock DLL.                                  
-        //sender_cleanup_1();
         assert(0);
     }
-    //SendBuffer(bufferSend, SENDER_PACKET_SIZE, senderSocket);
 
-    //printf("CLIENT CONNECT!\n");
 
     filePtr = fopen(fileName, "r");
     assert(filePtr);
@@ -68,13 +62,17 @@ void mainSender()
         }
 
         fileLen += 13;
-        bytesSent += 15.5; //TODO: check definition
+        bytesSent += 15.5; 
 
         for(i=1 ; i<=4 ; i++) //actual sending
         {
             afterHamming = addHamming(i);
-            SendBuffer(afterHamming, 4, senderSocket);
-            //TODO: checking if there was an error with the sending
+            statusSend = SendBuffer(afterHamming, 4, senderSocket);
+            if (statusSend == TRNS_FAILED)
+            {
+                printf("PROBLEN WITH SENDING\n");
+                assert(0);
+            }
         }
         lettersPacket[0] = fgetc(filePtr);
     }
@@ -88,13 +86,11 @@ void mainSender()
         assert(0);
 	}
 
-    //recieve final trans - maybe how many transmitted to server
-    //printf("I AM CLUENT AND SHTTING\n");
 	closesocket(senderSocket);
     bytesInt = (int)bytesSent;
 
     printf("file length: %d bytes\n", fileLen);
-    printf("sent: %d bytes\n", bytesInt); //TODO: CHECK
+    printf("sent: %d bytes\n", bytesInt); 
 
 
 }
@@ -110,62 +106,33 @@ int createConnectSocketSender()
     if ( senderSocket == INVALID_SOCKET ) 
 	{
         printf( "Error at socketSender( ): %ld\n", WSAGetLastError( ) );
-        //sender_cleanup_1();
         assert(0);
-		//goto server_cleanup_1;
     }
     portChannel = 63106; //TODO: DELETE
     service.sin_family = AF_INET;
     service.sin_addr.s_addr = inet_addr( ipChannel );
-    service.sin_port = htons( portChannel ); //The htons function converts a u_short from host to TCP/IP network byte order 
+    service.sin_port = htons( portChannel ); 
 	
     
     connectRes = connect(senderSocket, (SOCKADDR*)&service, sizeof (service));
 
-    //printf("waiting to connect...");
 
     return connectRes;
 }
-
-//void sender_cleanup_1()
-//{
-//    if ( WSACleanup() == SOCKET_ERROR )		
-//		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
-//        assert(0);
-//}
-
-//TransferResult_t SendBuffer( const char* Buffer, int BytesToSend, SOCKET sd )
-//{
-//	const char* CurPlacePtr = Buffer;
-//	int BytesTransferred;
-//	int RemainingBytesToSend = BytesToSend;
-//	
-//	while ( RemainingBytesToSend > 0 )  
-//	{
-//		/* send does not guarantee that the entire message is sent */
-//		BytesTransferred = send (sd, CurPlacePtr, RemainingBytesToSend, 0);
-//		if ( BytesTransferred == SOCKET_ERROR ) 
-//		{
-//			printf("send() failed, error %d\n", WSAGetLastError() );
-//			return TRNS_FAILED;
-//		}
-//		
-//		RemainingBytesToSend -= BytesTransferred;
-//		CurPlacePtr += BytesTransferred; // <ISP> pointer arithmetic
-//	}
-//
-//	return TRNS_SUCCEEDED;
-//}
 
 
 char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
 {
     unsigned char * beforeHamming = (unsigned char*)calloc(4,sizeof(unsigned char));
+    assert(beforeHamming);
     unsigned char* beforeHammingAligned= (unsigned char*)calloc(4, sizeof(unsigned char));
+    assert(beforeHammingAligned);
     unsigned char* finalHam = (unsigned char*)calloc(4, sizeof(unsigned char));
+    assert(finalHam);
+
     unsigned char * newHamming;
 
-    int i, lowLim;
+    int i, lowLim=0;
     switch(noBlock)
     {
         case 1:
@@ -193,12 +160,10 @@ char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int p
     alignedPacket(beforeHammingAligned, beforeHamming, noBlock); //beforeHammingAligned is updated
     actualAddHam(finalHam, beforeHammingAligned);
     return finalHam;
-    //return beforeHamming;
 }
 
 void alignedPacket(unsigned char * beforeHammingAligned, unsigned char * beforeHamming, int noBlock) //actually aligning the packet according to its noBlock
 {
-    //char* beforeHammingAligned;// = (char*)calloc(4, sizeof(char));
     int forShift;
     switch (noBlock)
     {
@@ -206,44 +171,35 @@ void alignedPacket(unsigned char * beforeHammingAligned, unsigned char * beforeH
         beforeHamming[3] = beforeHamming[3] & 3; // 3 = 0000 0011
         forShift = *((int*)beforeHamming);
         *(int*)beforeHammingAligned = forShift;
-        //return beforeHamming;
         break;
 
     case 2:
-        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
         beforeHamming[0] = beforeHamming[0] & 252; // 252 = 1111 1100
         beforeHamming[3] = beforeHamming[3] & 15; // 15 = 0000 1111
         forShift = *((int*)beforeHamming);
         forShift = forShift >> 2;
         *(int*)beforeHammingAligned = forShift;
-        //return beforeHammingAligned;
         break;
 
     case 3:
-        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
         beforeHamming[0] = beforeHamming[0] & 240; // 240 = 1111 0000
         beforeHamming[3] = beforeHamming[3] & 63; // 63 = 0011 1111
         forShift = *((int*)beforeHamming);
         forShift = forShift >> 4;
         *(int*)beforeHammingAligned = forShift;
-        //return beforeHammingAligned;
         break;
 
     case 4:
-        //beforeHammingAligned = (char*)calloc(4, sizeof(char));
-        //beforeHamming[0] = beforeHamming[0] & 15; // 15 = 0000 1111
-        //beforeHamming[3] = beforeHamming[3] & 252; // 252 = 1111 1100
+        
         forShift = *((int*)beforeHamming);
         forShift = forShift >> 6;
         *(int*)beforeHammingAligned = forShift;
-        //return beforeHammingAligned;
         break;
     }
 }
 
 void actualAddHam(unsigned char* finalHamm, unsigned char* beforeHammingAligned)
 {
-    //char* withHamming = (char*)calloc(4, sizeof(char));
     int accumulativeBits;
     int tempXor=0;
     int bits26Num = *((int*)beforeHammingAligned);
@@ -296,10 +252,9 @@ int main(int argc, char *argv[])
     ipChannel = argv[1];
     portChannel = atoi(argv[2]);
     
-    //mainSender();
     printf("enter file name:\n");
     gets(fileName);
-    //fileName=args[1];
+
     while(strcmp(fileName, "quit"))
 	{
         mainSender();

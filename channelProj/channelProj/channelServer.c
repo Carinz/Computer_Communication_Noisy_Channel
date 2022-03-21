@@ -1,11 +1,3 @@
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
-/* 
- This file was written for instruction purposes for the 
- course "Introduction to Systems Programming" at Tel-Aviv
- University, School of Electrical Engineering.
-Last updated by Amnon Drory, Winter 2011.
- */
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 #define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -21,15 +13,10 @@ Last updated by Amnon Drory, Winter 2011.
 #include "../../socketShared.h"
 #include "../../SocketSendRecvTools.h"
 
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
-//#define NUM_OF_WORKER_THREADS 2
-//TransferResult_t ReceiveBuffer( char* OutputBuffer, int RemainingBytesToReceive, SOCKET sd );
 
-//#define MAX_LOOPS 2
 #define SEND_STR_SIZE 35
 #define RAND_MAX 0x7FFF;
-//SOCKET mainSocket = INVALID_SOCKET;
 SOCKET socketSender = INVALID_SOCKET;
 SOCKET socketReciever = INVALID_SOCKET;
 
@@ -57,9 +44,7 @@ void initializeServer()
     if (StartupRes != NO_ERROR)
     {
         printf("error %ld at WSAStartup(), ending program.\n", WSAGetLastError());
-        // Tell the user that we could not find a usable WinSock DLL.   
         assert(0);
-        //return;
     }
 
     createSocket(&socketSender, "sender", 63106);
@@ -92,20 +77,16 @@ void MainServer()
  
     /* The WinSock DLL is acceptable. Proceed. */
 
-    //printf( "Waiting for a client to connect...\n" );
     
 	clientConnect(&acceptSocketSender, &socketSender);
 	clientConnect(&acceptSocketReciever, &socketReciever);
 
-    //statusRecieve = ReceiveBuffer(senderBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
-	//printf("THE MESSAGE: %s", senderBuffer);
 
     do
     {
         statusRecieve = ReceiveBuffer(beforeNoiseBuffer, SENDER_PACKET_SIZE, acceptSocketSender);
         if (statusRecieve == TRNS_FAILED)
         {
-            //TODO: handle
             printf("failed with recieving from sender\n");
             assert(0);
         }
@@ -116,14 +97,11 @@ void MainServer()
             gracefullyDiscReciever();
             break;
         }
-		//printf("THE MESSAGE: %s\n", beforeNoiseBuffer);
         tempNoFlip = 0;
         startIndex = addNoise(startIndex, &tempNoFlip); //start index is relevant only in deterministic
 
         noFlipBitsTotal += tempNoFlip;
 
-        // in addNoiseDet function, for the first loop we will reset firstIndex=n-1
-        //sendToRecieverClient
         
         statusSend = SendBuffer(afterNoiseBuffer, SENDER_PACKET_SIZE, acceptSocketReciever);
         if (statusSend == TRNS_FAILED)
@@ -135,13 +113,9 @@ void MainServer()
         noRetransBytes += 3.875;
     }while(statusRecieve == TRNS_SUCCEEDED);
 
-    //printf("DONE!");
     noRetransBytesInt = (int)noRetransBytes;
     printf("retransmitted %d bytes, flipped %d bits\n", noRetransBytesInt, noFlipBitsTotal);
 
-    // recieve SIZE_BUFFER packet. happens until the packet has 0.
-    // while recieveBuffer return value >0 
-    // gracefully shtdown
 
 
 }
@@ -204,7 +178,6 @@ int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
     int tempFlipped=0;
 
     a = a << tmpStartIndex;
-    //*bits31Num = *bits31Num ^ a;
     if (counter >= 31)
         tmpStartIndex = counter - 31;// det_n + (counter - det_n) - 31;
 
@@ -215,7 +188,6 @@ int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
             *bits31Num = *bits31Num ^ a;
             a = a << det_n;
             counter += det_n;
-            //*bits31Num = *bits31Num ^ a;
             tempFlipped++;
         } while (counter < 31);
         tmpStartIndex = counter - 31;// det_n + (counter - det_n) - 31;
@@ -229,7 +201,6 @@ int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
 
 void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM FIELD
 {
-    
 	//unsigned long Address;
 	SOCKADDR_IN service;
 	int bindRes, size;
@@ -267,7 +238,6 @@ void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM 
 	if ( bindRes == SOCKET_ERROR ) 
 	{
         printf( "bind() failed with error %ld. Ending program\n", WSAGetLastError() );
-		//server_cleanup_2(mainSocket);
         assert(0);
 	}
     
@@ -276,7 +246,6 @@ void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM 
     if ( ListenRes == SOCKET_ERROR ) 
 	{
         printf( "Failed listening on socket, error %ld.\n", WSAGetLastError() );
-		//server_cleanup_2(mainSocket);
         assert(0);
 	}
 
@@ -292,45 +261,26 @@ void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket)
 		if ( *acceptSocket == INVALID_SOCKET )
 		{
 			printf( "Accepting connection with client failed, error %ld\n", WSAGetLastError() ) ; 
-			//server_cleanup_3(); //TODO: do all gracefully closing like cleanup_3 do in thread function
             assert(0);
 		}
 
-    //printf( "Client Connected.\n" );
 }
 
-//void server_cleanup_1()
-//{
-//    if ( WSACleanup() == SOCKET_ERROR )		
-//		printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError() );
-//        assert(0);
-//}
-
-//void server_cleanup_2(SOCKET * mainSocket)
-//{
-//    if ( closesocket( *mainSocket ) == SOCKET_ERROR )
-//		printf("Failed to close MainSocket, error %ld. Ending program\n", WSAGetLastError() ); 
-//    server_cleanup_1();
-//}
 
 void gracefullyDiscSender()
 {
 	int shutRes;
-    //SOCKET socketSender = INVALID_SOCKET;
 
-	// sendfinaltransition
 	shutRes = shutdown(acceptSocketSender, SD_SEND);
 	if ( shutRes == SOCKET_ERROR ) 
 	{
         printf( "shutdown failed with error %ld. Ending program\n", WSAGetLastError( ) );
         assert(0);
 	}
-	//printf("SHTTING DOWN SENDER\n");
 	closesocket(acceptSocketSender);
-    //closesocket(socketSender);
 }
 
-void gracefullyDiscReciever() //TODO: unite
+void gracefullyDiscReciever() 
 {
     int shutRes = shutdown(acceptSocketReciever, SD_SEND);
     if (shutRes == SOCKET_ERROR)
@@ -339,13 +289,12 @@ void gracefullyDiscReciever() //TODO: unite
         assert(0);
     }
     closesocket(acceptSocketReciever);
-    //closesocket(socketReciever);
 
 }
 
 int main(int argc, char *argv[])
 {
-    char doContinue[5];// = {'/0'};
+    char doContinue[5];
     
     if (argc == 3)
     {
