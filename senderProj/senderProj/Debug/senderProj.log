@@ -1,10 +1,5 @@
 ﻿  senderClient.c
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(29,19): warning C4101: 'statusRecieve': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(166,21): warning C4101: 'newHamming': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(199,36): warning C4028: formal parameter 1 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(199,74): warning C4028: formal parameter 2 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(244,34): warning C4028: formal parameter 1 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(244,60): warning C4028: formal parameter 2 different from declaration
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(247,9): warning C4101: 'accumulativeBits': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(301,9): warning C4013: 'gets' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(133,21): warning C4101: 'newHamming': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(203,9): warning C4101: 'accumulativeBits': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\senderProj\senderClient.c(256,9): warning C4013: 'gets' undefined; assuming extern returning int
   senderProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\senderProj\Debug\senderProj.exe

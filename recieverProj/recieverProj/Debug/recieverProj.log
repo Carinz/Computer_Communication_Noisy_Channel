@@ -1,8 +1,9 @@
-﻿  recieverClient.c
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(89,42): warning C4013: 'calculateIndexErr' undefined; assuming extern returning int
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(36,24): warning C4101: 'shutRes': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(37,20): warning C4101: 'afterHamming': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(243,51): warning C4101: 'totalXors': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(243,62): warning C4101: 'bit31Num': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(405,9): warning C4013: 'gets' undefined; assuming extern returning int
+﻿  SocketSendRecvTools.c
+  recieverClient.c
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(32,24): warning C4101: 'shutRes': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(33,20): warning C4101: 'afterHamming': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(135,51): warning C4101: 'totalXors': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(135,62): warning C4101: 'bit31Num': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(290,9): warning C4013: 'gets' undefined; assuming extern returning int
+  Generating Code...
   recieverProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\Debug\recieverProj.exe

@@ -1,4 +1,18 @@
 
+#pragma once
+
+#pragma comment(lib, "ws2_32.lib") 
+
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <winsock2.h>
+
+
 #include "..//..//SocketSendRecvTools.h"
 
 void mainSender();

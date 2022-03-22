@@ -108,7 +108,6 @@ int createConnectSocketSender()
         printf( "Error at socketSender( ): %ld\n", WSAGetLastError( ) );
         assert(0);
     }
-    portChannel = 63106; //TODO: DELETE
     service.sin_family = AF_INET;
     service.sin_addr.s_addr = inet_addr( ipChannel );
     service.sin_port = htons( portChannel ); 

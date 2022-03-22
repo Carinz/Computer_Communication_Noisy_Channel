@@ -47,8 +47,8 @@ void initializeServer()
         assert(0);
     }
 
-    createSocket(&socketSender, "sender", 63106);
-    createSocket(&socketReciever, "reciever", 63107);
+    createSocket(&socketSender, "sender");
+    createSocket(&socketReciever, "reciever"); 
 }
 
 void MainServer()
@@ -58,28 +58,9 @@ void MainServer()
 
 	TransferResult_t statusRecieve, statusSend;
     int startIndex = det_n - 1;
-	//// Initialize Winsock.
- //   WSADATA wsaData;
- //   int StartupRes = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );	           
-
- //   if ( StartupRes != NO_ERROR )
-	//{
- //       printf( "error %ld at WSAStartup( ), ending program.\n", WSAGetLastError() );
-	//	// Tell the user that we could not find a usable WinSock DLL.                                  
-	//	return;
-	//}
-
-    /*printf("sender socket : IP address = %d port = %d", ip, port);
-    printf("receiver socket : IP address = %d port = %d", ip, port);*/
-
-    /*createSocket(&socketSender, SERVER_PORT_SENDER);
-    createSocket(&socketReciever, SERVER_PORT_RECIEVER);*/
- 
-    /* The WinSock DLL is acceptable. Proceed. */
-
-    
+	    
 	clientConnect(&acceptSocketSender, &socketSender);
-	clientConnect(&acceptSocketReciever, &socketReciever);
+	clientConnect(&acceptSocketReciever, &socketReciever); 
 
 
     do
@@ -199,13 +180,14 @@ int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
 
 }
 
-void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM FIELD
+void createSocket(SOCKET * mainSocket, char * type) 
 {
-	//unsigned long Address;
 	SOCKADDR_IN service;
 	int bindRes, size;
 	int ListenRes;
-
+    char* ipAddress;
+    char hostname[1024];
+    struct hostent* entry;
 
     // Create a socket.    
     *mainSocket = socket( AF_INET, SOCK_STREAM, 0 );
@@ -217,23 +199,10 @@ void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM 
 	}
 
     service.sin_family = AF_INET;
-    service.sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO: conctract the port in next line!
+    service.sin_addr.s_addr = htonl(INADDR_ANY); 
+    service.sin_port = htons( 0 ); 
+ 
 
-    //service.sin_addr.s_addr = htonl(INADDR_ANY); //TODO: conctract the port in next line!
-    //service.sin_port = htons( 0 ); //The htons function converts a u_short from host to TCP/IP network byte order 
-	                                   //( which is big-endian ).
-
-    service.sin_port = htons(num); //TODO: DELETE AND LEAVE THE ABOVE LINE
-	/*
-		The three lines following the declaration of sockaddr_in service are used to set up 
-		the sockaddr structure: 
-		AF_INET is the Internet address family. 
-		"127.0.0.1" is the local IP address to which the socket will be bound. 
-	    2345 is the port number to which the socket will be bound.
-	*/
-
-	// Call the bind function, passing the created socket and the sockaddr_in structure as parameters. 
-	// Check for general errors.
     bindRes = bind( *mainSocket, ( SOCKADDR* ) &service, sizeof( service ) );
 	if ( bindRes == SOCKET_ERROR ) 
 	{
@@ -250,8 +219,11 @@ void createSocket(SOCKET * mainSocket, char * type, int num) //TODO: DELETE NUM 
 	}
 
     size = sizeof(service);
-    getsockname(*mainSocket, (struct sockaddr*)&service, &size);
-    printf("%s socket: IP address = %s port = %d\n", type, inet_ntoa(service.sin_addr), ntohs(service.sin_port));
+    ASSERT(getsockname(*mainSocket, (struct sockaddr*)&service, &size) == NO_ERROR, "getsockname failed");
+    ASSERT(gethostname(hostname, 1024) == 0, "gethostname failed");
+    entry = gethostbyname(hostname);
+    ipAddress = inet_ntoa(*((struct in_addr*)entry->h_addr_list[0]));
+    printf("%s socket: IP address = %s port = %d\n", type, ipAddress, ntohs(service.sin_port));
 
 }
 
@@ -294,7 +266,7 @@ void gracefullyDiscReciever()
 
 int main(int argc, char *argv[])
 {
-    char doContinue[5];
+    char doContinue[10];
     
     if (argc == 3)
     {
