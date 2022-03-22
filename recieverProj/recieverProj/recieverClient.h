@@ -2,6 +2,7 @@
 
 
 void mainReciever();
+void zerosRap();
 int createConnectSocketReciever();
 int calculateIndexErr();
 void changeErrorBit();

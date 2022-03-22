@@ -1,9 +1,7 @@
-﻿  SocketSendRecvTools.c
-  recieverClient.c
+﻿  recieverClient.c
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(32,24): warning C4101: 'shutRes': unreferenced local variable
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(33,20): warning C4101: 'afterHamming': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(135,51): warning C4101: 'totalXors': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(135,62): warning C4101: 'bit31Num': unreferenced local variable
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(290,9): warning C4013: 'gets' undefined; assuming extern returning int
-  Generating Code...
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(148,51): warning C4101: 'totalXors': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(148,62): warning C4101: 'bit31Num': unreferenced local variable
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\recieverProj\recieverClient.c(303,9): warning C4013: 'gets' undefined; assuming extern returning int
   recieverProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\recieverProj\Debug\recieverProj.exe

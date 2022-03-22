@@ -1,5 +1,7 @@
 ﻿  channelServer.c
 D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(19,1): warning C4005: 'RAND_MAX': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdlib.h(348): message : see previous definition of 'RAND_MAX'
-D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(321,13): warning C4013: 'gets' undefined; assuming extern returning int
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(222,5): warning C4002: too many arguments for function-like macro invocation 'assert'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(223,5): warning C4002: too many arguments for function-like macro invocation 'assert'
+D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\channelProj\channelServer.c(296,13): warning C4013: 'gets' undefined; assuming extern returning int
   channelProj.vcxproj -> D:\MyDocuments\c documents\computerCommun\visualStudio\computerCommunicationRep\channelProj\Debug\channelProj.exe

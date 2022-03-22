@@ -38,7 +38,7 @@ void mainReciever()
 
     if (StartupRes != NO_ERROR)
     {
-        printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
+        printf("error %ld at WSAStartup(), ending program.\n", WSAGetLastError());
         // Tell the user that we could not find a usable WinSock DLL.                                  
         assert(0);
     }
@@ -47,7 +47,7 @@ void mainReciever()
 
     if (connectStatus != NO_ERROR)
     {
-        printf("error %ld at WSAStartup( ), ending program.\n", WSAGetLastError());
+        printf("error %ld at WSAStartup(), ending program.\n", WSAGetLastError());
         // Tell the user that we could not find a usable WinSock DLL.                                  
         assert(0);
     }
@@ -86,6 +86,7 @@ void mainReciever()
         if (statusRecieve == TRNS_SUCCEEDED)
         {
             mergingString();
+            zerosRap();
             fputs(finalDecodedBuffer, filePtr);
 
             bytesRecieved += 15.5; 
@@ -103,6 +104,19 @@ void mainReciever()
     printf("corrected %d errors\n", noCorrected);
    
 
+}
+
+void zerosRap()
+{
+    int i = 0;
+    for (i = 0; i < 14; i++)
+    {
+        if (finalDecodedBuffer[i] == EOF)
+        {
+            finalDecodedBuffer[i] = '\0';
+            break;
+        }
+    }
 }
 
 int createConnectSocketReciever()

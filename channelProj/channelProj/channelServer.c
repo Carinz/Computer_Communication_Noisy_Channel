@@ -219,8 +219,8 @@ void createSocket(SOCKET * mainSocket, char * type)
 	}
 
     size = sizeof(service);
-    ASSERT(getsockname(*mainSocket, (struct sockaddr*)&service, &size) == NO_ERROR, "getsockname failed");
-    ASSERT(gethostname(hostname, 1024) == 0, "gethostname failed");
+    assert(getsockname(*mainSocket, (struct sockaddr*)&service, &size) == NO_ERROR, "getsockname failed");
+    assert(gethostname(hostname, 1024) == 0, "gethostname failed");
     entry = gethostbyname(hostname);
     ipAddress = inet_ntoa(*((struct in_addr*)entry->h_addr_list[0]));
     printf("%s socket: IP address = %s port = %d\n", type, ipAddress, ntohs(service.sin_port));
