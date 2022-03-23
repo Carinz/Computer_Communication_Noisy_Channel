@@ -21,6 +21,8 @@ char fileName [100];
 unsigned char lettersPacket[NO_LETTERS_PACKET];
 
 void mainSender()
+//The purpose of the function: as we have described in the "readMe" file, the fuctions creates a connection with the Server, gets a text file and sends 
+//all the information in the file to the Server with the addition of suitable hamming bits (3,26,31).
 {
     int i, fileLen=0, bytesInt=0;
     double bytesSent = 0.0;
@@ -96,6 +98,7 @@ void mainSender()
 }
 
 int createConnectSocketSender()
+//The function creates a socket for the Sender and returns an int variable- 1 if the connection succeeded and 0 else
 {
     SOCKADDR_IN service;
 	int connectRes;
@@ -120,7 +123,9 @@ int createConnectSocketSender()
 }
 
 
-char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int pointer to the addition to 31 bits 
+char * addHamming(int noBlock) 
+//input: an int number which indicates which packet to choose out of the 104 bits,  output: a new int pointer to the addition to 31 bits 
+//The purpose of the function is to choose out of the 104 bits, specific packet of 32 bits 
 {
     unsigned char * beforeHamming = (unsigned char*)calloc(4,sizeof(unsigned char));
     assert(beforeHamming);
@@ -162,6 +167,8 @@ char * addHamming(int noBlock) //input: pointer to 26 bits,  output: a new int p
 }
 
 void alignedPacket(unsigned char * beforeHammingAligned, unsigned char * beforeHamming, int noBlock) //actually aligning the packet according to its noBlock
+//input: 2 unsigned char pointers and an int variable
+//The purpose of the function is to cut every 26 bits and organize them in 4 different packets
 {
     int forShift;
     switch (noBlock)
@@ -198,6 +205,8 @@ void alignedPacket(unsigned char * beforeHammingAligned, unsigned char * beforeH
 }
 
 void actualAddHam(unsigned char* finalHamm, unsigned char* beforeHammingAligned)
+//input: 2 unsigned char pointers 
+//The purpose of the function: calculating Hamming bits and concatenate them to every one of the 4 packets (26 bit each)
 {
     int accumulativeBits;
     int tempXor=0;
@@ -234,6 +243,8 @@ void actualAddHam(unsigned char* finalHamm, unsigned char* beforeHammingAligned)
 }
 
 int xorTree(unsigned int num)
+//input: unsigned int variable, output: int variable- the result of the Xor function 
+//The purpose of the function: calculating the Xor between all the bits of an int variable
 {
     int retVal=0;
     while (num > 0)
@@ -247,6 +258,7 @@ int xorTree(unsigned int num)
 
 
 int main(int argc, char *argv[])
+//main function
 {
     ipChannel = argv[1];
     portChannel = atoi(argv[2]);

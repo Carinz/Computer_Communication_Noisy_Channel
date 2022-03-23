@@ -52,6 +52,9 @@ void initializeServer()
 }
 
 void MainServer()
+//The purpose of the function: as we have described in the "readMe" file, the fuctions creates connections with the Sender and Reciever, gets information 
+//from the Sender with the addition of suitable hamming bits (3,26,31), adding the a spesific noise and sending the new information to the Reciever.
+
 {
     double noRetransBytes=0;
     int noFlipBitsTotal=0, tempNoFlip=0, noRetransBytesInt=0;
@@ -101,7 +104,10 @@ void MainServer()
 
 }
 
-int addNoise(int tmpStartIndex, int * noFlipBits) //returns start index to next packet if deterministic
+int addNoise(int tmpStartIndex, int * noFlipBits)
+//returns start index to next packet if deterministic
+//input: int variable and a int pointer, output: int variable 
+//The purpose of the function: choosing which noise to execute- random noise/deterministic noise
 {
     if (!strcmp(whichMode,"-d")) // deterministric
     {
@@ -115,6 +121,8 @@ int addNoise(int tmpStartIndex, int * noFlipBits) //returns start index to next 
 }
 
 int addNoiseRand(int * noflipBits)
+//input: int pointer, output: int variable
+//The purpose of the function: adding the random false noise
 {
     int i;
     int doesItFlip; //1 in probability prob/2^16 ; 0 in 1-prob
@@ -134,6 +142,9 @@ int addNoiseRand(int * noflipBits)
 }
 
 int randIndicator()
+//input: output: int variable
+//The purpose of the function: as the instructions say, we have to raffle a number between 0-2^16. the funtion rand()
+//raffles a number between 0-2^15, therfore, we solved the problem by raffling another single bit and concatenating it to the variable with the 15 bits.
 {
     int rand15 = rand();
     int rand2 = rand() % 2;
@@ -151,6 +162,8 @@ int randIndicator()
 
 
 int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
+//input: int pointer and an int variable, output: int variable
+//The purpose of the function: adding the deterministic false noise
 {
     unsigned int* bits31Num = (int*)(beforeNoiseBuffer);
     int a = 1; 
@@ -181,8 +194,9 @@ int addNoiseDet(int tmpStartIndex, int * noFlipped) //startIndex 0 to 30
 }
 
 void createSocket(SOCKET * mainSocket, char * type) 
-{
-	SOCKADDR_IN service;
+//The function creates a socket for the Server, picking 2 available ports for the Sender and Reciever
+{	
+SOCKADDR_IN service;
 	int bindRes, size;
 	int ListenRes;
     char* ipAddress;
@@ -228,6 +242,7 @@ void createSocket(SOCKET * mainSocket, char * type)
 }
 
 void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket)
+//The purpose of the function: Connecting the Server to the Sender/Reciever
 {
     *acceptSocket = accept( *mainSocket, NULL, NULL );
 		if ( *acceptSocket == INVALID_SOCKET )
@@ -240,6 +255,7 @@ void clientConnect(SOCKET * acceptSocket, SOCKET * mainSocket)
 
 
 void gracefullyDiscSender()
+//The purpose of the function: Closing the connection between the Server and the Sender by shutting down the Server
 {
 	int shutRes;
 
@@ -253,6 +269,7 @@ void gracefullyDiscSender()
 }
 
 void gracefullyDiscReciever() 
+// The purpose of the function : Closing the connection between the Server and the Reciever by shutting down the Server
 {
     int shutRes = shutdown(acceptSocketReciever, SD_SEND);
     if (shutRes == SOCKET_ERROR)

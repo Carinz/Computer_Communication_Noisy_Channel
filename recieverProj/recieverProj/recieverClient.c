@@ -24,6 +24,9 @@ char fileName[100];
 unsigned char recieveBuffer[SENDER_PACKET_SIZE];
 
 void mainReciever()
+//The purpose of the function: as we have described in the "readMe" file, the fuctions creates a connection with the Server 
+//get all the information from the Server with the addition of suitable hamming bits (3,26,31) and specific noise and fixing as it can the errors and re-hamming the information into a new text file
+
 {
     double bytesRecieved=0.0;
     int j, tmpFliped=0, actualNoBytes=0, bytesRecievedInt=0;
@@ -107,6 +110,7 @@ void mainReciever()
 }
 
 void zerosRap()
+//The purpose of the function: Bonus- handling any size of file by padding the last bytes in case that the file length doesn't devied by 26.
 {
     int i = 0;
     for (i = 0; i < 14; i++)
@@ -120,6 +124,7 @@ void zerosRap()
 }
 
 int createConnectSocketReciever()
+//The function creates a socket for the Reciever and returns an int variable- 1 if the connection succeeded and 0 else
 {
     SOCKADDR_IN service;
     int connectRes;
@@ -144,6 +149,8 @@ int createConnectSocketReciever()
 }
 
 int calculateIndexErr()
+//output: int variable which indicates if there has been a fliped bit (an error occured)
+//The porpose of the function- Finding the Index error in the string
 {
     int b1, b2, b4, b8, b16, c1, c2, c4, c8, c16, totalXors, bit31Num;
     int bits31Num = *((int*)recieveBuffer);
@@ -214,8 +221,10 @@ int calculateIndexErr()
     return 1;
 }
 
-//fixing the error bit 
-void changeErrorBit() {
+ 
+void changeErrorBit()
+//The purpose of the Function: fixing the error bit by flipping it 
+{
     int bits31Num = *((int*)recieveBuffer);
     int bil = 1;
 
@@ -226,7 +235,9 @@ void changeErrorBit() {
     
 }
 
-void mergingString() {
+void mergingString()
+//The purpose of the Function: re-hamming the string, cancelling the error bits
+{
     //nullify all the hamming index bits
     char temp=0;
     unsigned int *bits31Num = (int*)(lettersPacket);
@@ -270,6 +281,8 @@ void mergingString() {
 }
 
 void gracefullyDiscFromChannel()
+// The purpose of the function : Closing the connection between the Server and the Reciever by shutting down the Reciever
+
 {
     int shutRes;
     
@@ -283,6 +296,8 @@ void gracefullyDiscFromChannel()
 }
 
 int xorTree(unsigned int num)
+//input: unsigned int variable, output: int variable- the result of the Xor function 
+//The purpose of the function: calculating the Xor between all the bits of an int variable
 {
     int retVal = 0;
     while (num > 0)
